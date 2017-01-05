@@ -1,0 +1,10 @@
+xcuserdata
+project.xcworkspace
+*~
+Pods
+conference.xcworkspace
+node_modules
+/android/local.properties
+/android/.idea/workspace.xml
+/android/.idea/libraries
+.gradle

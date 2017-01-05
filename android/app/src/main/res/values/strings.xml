@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">conference</string>
+    <string name="login_account">发送用户id</string>
+    <string name="channel_error_title">Connection error</string>
+    <string name="ok">OK</string>
+    <string name="switch_camera">Switch front/back camera</string>
+    <string name="capture_format_change_text">Slide to change capture format</string>
+    <string name="camera2_texture_only_error">Camera2 only supports capturing to texture. Either disable Camera2 or enable capturing to texture in the options.</string>
+    <string name="login_target_account">接收用户id</string>
+    <string name="partipant1">1号参会者</string>
+    <string name="partipant2">2号参会者</string>
+    <string name="partipant3">3号参会者</string>
+    <string name="partipant4">4号参会者</string>
+    <string name="login_login">登  录</string>
+</resources>

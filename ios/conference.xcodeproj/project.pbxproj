@@ -1,0 +1,983 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03872192C6DC12E7AC4E9696 /* libPods-conference.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB3F549160F6FDFD216FF7D0 /* libPods-conference.a */; };
+		48C7A13D1A065BDA0020E7F6 /* call.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13A1A065BDA0020E7F6 /* call.mp3 */; };
+		48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13B1A065BDA0020E7F6 /* end.mp3 */; };
+		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
+		6D06CF1A1E0F68BF0048AC85 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D06CF191E0F68BF0048AC85 /* ViewController.m */; };
+		6D06CF491E0F6F220048AC85 /* ConferenceCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D06CF481E0F6F220048AC85 /* ConferenceCommand.m */; };
+		6D0C9BC71DF7A9B300582D38 /* ConferenceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D0C9BC61DF7A9B300582D38 /* ConferenceViewController.m */; };
+		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
+		6D401C201AAC925C0041ABC6 /* apns.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6D401C1F1AAC925C0041ABC6 /* apns.caf */; };
+		6D4D55E11BA4033800247208 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D4D55E01BA4033800247208 /* VideoToolbox.framework */; };
+		6D597B331E0EF3AF00DE3C49 /* libimsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D597B301E0EF37F00DE3C49 /* libimsdk.a */; };
+		6DAD3F261DF7CA0600C70602 /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6DAD3F251DF7CA0200C70602 /* jitsi.ttf */; };
+		6DC8618F1DFBEEBD00A8AF24 /* libToast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC8618E1DFBEEBD00A8AF24 /* libToast.a */; };
+		6DC861BA1DFC2F2A00A8AF24 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */; };
+		6DC861C21DFC2FCB00A8AF24 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DC861CB1DFC310400A8AF24 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6DC861CA1DFC310400A8AF24 /* FontAwesome.ttf */; };
+		6DC861CD1DFC317100A8AF24 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861A41DFC2EE400A8AF24 /* libRNSound.a */; };
+		6DC861CE1DFC317700A8AF24 /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC8619E1DFC2EDE00A8AF24 /* libReactNativePermissions.a */; };
+		6DC861CF1DFC317D00A8AF24 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861B01DFC2EF300A8AF24 /* libRNVectorIcons.a */; };
+		6DC861D01DFC318600A8AF24 /* libRCTWebRTC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861B61DFC2EFC00A8AF24 /* libRCTWebRTC.a */; };
+		6DC861F21DFC34E100A8AF24 /* libRCTToast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861F11DFC34CE00A8AF24 /* libRCTToast.a */; };
+		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
+		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
+		6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996B19EB9AAE009B03C4 /* UIKit.framework */; };
+		6DF3997219EB9AAE009B03C4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6DF3997019EB9AAE009B03C4 /* InfoPlist.strings */; };
+		6DF3997419EB9AAE009B03C4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3997319EB9AAE009B03C4 /* main.m */; };
+		6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3997719EB9AAE009B03C4 /* AppDelegate.m */; };
+		6DF3998319EB9AAE009B03C4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DF3998219EB9AAE009B03C4 /* Images.xcassets */; };
+		6DF3998A19EB9AAE009B03C4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3998919EB9AAE009B03C4 /* XCTest.framework */; };
+		6DF3998B19EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
+		6DF3998C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996B19EB9AAE009B03C4 /* UIKit.framework */; };
+		6DF3999419EB9AAE009B03C4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6DF3999219EB9AAE009B03C4 /* InfoPlist.strings */; };
+		6DF3999619EB9AAE009B03C4 /* conferenceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF3999519EB9AAE009B03C4 /* conferenceTests.m */; };
+		6DF39B2919EBB607009B03C4 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2819EBB607009B03C4 /* CoreMedia.framework */; };
+		6DF39B2B19EBB617009B03C4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */; };
+		6DF39B2D19EBB649009B03C4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */; };
+		6DF39BC919ED72D7009B03C4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF39BC819ED72D7009B03C4 /* libsqlite3.dylib */; };
+		6DFA633D1E12433C00F954F6 /* GroupVOIOPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DFA633B1E12433C00F954F6 /* GroupVOIOPViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6D597B2F1E0EF37F00DE3C49 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D597B291E0EF37F00DE3C49 /* imsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D032F181AA993C0004AA39F;
+			remoteInfo = imsdk;
+		};
+		6D597B311E0EF37F00DE3C49 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D597B291E0EF37F00DE3C49 /* imsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D032F231AA993C0004AA39F;
+			remoteInfo = imsdkTests;
+		};
+		6DC8619D1DFC2EDE00A8AF24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DC861991DFC2EDE00A8AF24 /* ReactNativePermissions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D23B34F1C767B80008B4819;
+			remoteInfo = ReactNativePermissions;
+		};
+		6DC861A31DFC2EE400A8AF24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DC8619F1DFC2EE400A8AF24 /* RNSound.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19825A1E1BD4A89800EE0337;
+			remoteInfo = RNSound;
+		};
+		6DC861AF1DFC2EF300A8AF24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DC861AB1DFC2EF300A8AF24 /* RNVectorIcons.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
+			remoteInfo = RNVectorIcons;
+		};
+		6DC861B51DFC2EFC00A8AF24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DC861B11DFC2EFC00A8AF24 /* RCTWebRTC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 35A2221F1CB493700015FD5C;
+			remoteInfo = RCTWebRTC;
+		};
+		6DC861F01DFC34CE00A8AF24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DC861EC1DFC34CD00A8AF24 /* RCTToast.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 327633421BFAAD7E004DA88E;
+			remoteInfo = RCTToast;
+		};
+		6DF3998D19EB9AAE009B03C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6DF3995C19EB9AAE009B03C4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6DF3996319EB9AAE009B03C4;
+			remoteInfo = conference;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6D45D8231DD89C5900FCAC19 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6DC861C21DFC2FCB00A8AF24 /* WebRTC.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0A1342F85F42ADF8805E899A /* Pods-conference.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-conference.debug.xcconfig"; path = "Pods/Target Support Files/Pods-conference/Pods-conference.debug.xcconfig"; sourceTree = "<group>"; };
+		48C7A13A1A065BDA0020E7F6 /* call.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = call.mp3; sourceTree = "<group>"; };
+		48C7A13B1A065BDA0020E7F6 /* end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = end.mp3; sourceTree = "<group>"; };
+		48C7A13C1A065BDA0020E7F6 /* start.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = start.mp3; sourceTree = "<group>"; };
+		48DC1A111A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		48DC1A121A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		6D06CF181E0F68BF0048AC85 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		6D06CF191E0F68BF0048AC85 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		6D06CF471E0F6F220048AC85 /* ConferenceCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConferenceCommand.h; sourceTree = "<group>"; };
+		6D06CF481E0F6F220048AC85 /* ConferenceCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConferenceCommand.m; sourceTree = "<group>"; };
+		6D0C9BC51DF7A9B300582D38 /* ConferenceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConferenceViewController.h; sourceTree = "<group>"; };
+		6D0C9BC61DF7A9B300582D38 /* ConferenceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConferenceViewController.m; sourceTree = "<group>"; };
+		6D2E3FB81C7B6C4400707C00 /* libimsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libimsdk.a; path = "../../../Library/Developer/Xcode/DerivedData/Face-ceszylxmdojypuduierdlregqnrc/Build/Products/Debug-iphoneos/libimsdk.a"; sourceTree = "<group>"; };
+		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		6D401C1F1AAC925C0041ABC6 /* apns.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = apns.caf; sourceTree = "<group>"; };
+		6D4D55E01BA4033800247208 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		6D597B291E0EF37F00DE3C49 /* imsdk.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = imsdk.xcodeproj; path = imsdk/imsdk.xcodeproj; sourceTree = "<group>"; };
+		6DAD3F251DF7CA0200C70602 /* jitsi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = jitsi.ttf; path = conference/jitsi.ttf; sourceTree = "<group>"; };
+		6DC8618E1DFBEEBD00A8AF24 /* libToast.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libToast.a; path = "../../../Library/Developer/Xcode/DerivedData/Face-dlfemuadtpuzgqfbtizqppvlwron/Build/Products/Debug-iphoneos/Toast/libToast.a"; sourceTree = "<group>"; };
+		6DC861991DFC2EDE00A8AF24 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
+		6DC8619F1DFC2EE400A8AF24 /* RNSound.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSound.xcodeproj; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; };
+		6DC861AB1DFC2EF300A8AF24 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
+		6DC861B11DFC2EFC00A8AF24 /* RCTWebRTC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebRTC.xcodeproj; path = "../node_modules/react-native-webrtc/ios/RCTWebRTC.xcodeproj"; sourceTree = "<group>"; };
+		6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
+		6DC861CA1DFC310400A8AF24 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		6DC861EC1DFC34CD00A8AF24 /* RCTToast.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTToast.xcodeproj; path = "../node_modules/react-native-toast/ios/RCTToast.xcodeproj"; sourceTree = "<group>"; };
+		6DF3996419EB9AAE009B03C4 /* conference.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = conference.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DF3996719EB9AAE009B03C4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6DF3996B19EB9AAE009B03C4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6DF3996F19EB9AAE009B03C4 /* conference-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "conference-Info.plist"; sourceTree = "<group>"; };
+		6DF3997119EB9AAE009B03C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6DF3997319EB9AAE009B03C4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6DF3997519EB9AAE009B03C4 /* conference-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "conference-Prefix.pch"; sourceTree = "<group>"; };
+		6DF3997619EB9AAE009B03C4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		6DF3997719EB9AAE009B03C4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6DF3998219EB9AAE009B03C4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		6DF3998819EB9AAE009B03C4 /* FaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = FaceTests.xctest; path = conferenceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DF3998919EB9AAE009B03C4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		6DF3999119EB9AAE009B03C4 /* conferenceTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "conferenceTests-Info.plist"; sourceTree = "<group>"; };
+		6DF3999319EB9AAE009B03C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6DF3999519EB9AAE009B03C4 /* conferenceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = conferenceTests.m; sourceTree = "<group>"; };
+		6DF39B2819EBB607009B03C4 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6DF39BC819ED72D7009B03C4 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		6DFA633B1E12433C00F954F6 /* GroupVOIOPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupVOIOPViewController.m; sourceTree = "<group>"; };
+		6DFA633C1E12433C00F954F6 /* GroupVOIPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupVOIPViewController.h; sourceTree = "<group>"; };
+		8E573407CB864F74916E4ED9 /* Pods-conference.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-conference.release.xcconfig"; path = "Pods/Target Support Files/Pods-conference/Pods-conference.release.xcconfig"; sourceTree = "<group>"; };
+		CB3F549160F6FDFD216FF7D0 /* libPods-conference.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-conference.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6DF3996119EB9AAE009B03C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D597B331E0EF3AF00DE3C49 /* libimsdk.a in Frameworks */,
+				6DC861F21DFC34E100A8AF24 /* libRCTToast.a in Frameworks */,
+				6DC861D01DFC318600A8AF24 /* libRCTWebRTC.a in Frameworks */,
+				6DC861CF1DFC317D00A8AF24 /* libRNVectorIcons.a in Frameworks */,
+				6DC861CE1DFC317700A8AF24 /* libReactNativePermissions.a in Frameworks */,
+				6DC861CD1DFC317100A8AF24 /* libRNSound.a in Frameworks */,
+				6DC8618F1DFBEEBD00A8AF24 /* libToast.a in Frameworks */,
+				6D4D55E11BA4033800247208 /* VideoToolbox.framework in Frameworks */,
+				6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */,
+				6DF39BC919ED72D7009B03C4 /* libsqlite3.dylib in Frameworks */,
+				6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */,
+				6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */,
+				6DF39B2D19EBB649009B03C4 /* AVFoundation.framework in Frameworks */,
+				6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */,
+				6DF39B2B19EBB617009B03C4 /* AudioToolbox.framework in Frameworks */,
+				6DF39B2919EBB607009B03C4 /* CoreMedia.framework in Frameworks */,
+				6DC861BA1DFC2F2A00A8AF24 /* WebRTC.framework in Frameworks */,
+				03872192C6DC12E7AC4E9696 /* libPods-conference.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6DF3998519EB9AAE009B03C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DF3998A19EB9AAE009B03C4 /* XCTest.framework in Frameworks */,
+				6DF3998C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */,
+				6DF3998B19EB9AAE009B03C4 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		48C7A1391A065BD90020E7F6 /* sound */ = {
+			isa = PBXGroup;
+			children = (
+				6D401C1F1AAC925C0041ABC6 /* apns.caf */,
+				48C7A13A1A065BDA0020E7F6 /* call.mp3 */,
+				48C7A13B1A065BDA0020E7F6 /* end.mp3 */,
+				48C7A13C1A065BDA0020E7F6 /* start.mp3 */,
+			);
+			path = sound;
+			sourceTree = "<group>";
+		};
+		6D03316A1AAB7375004AA39F /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				6D597B291E0EF37F00DE3C49 /* imsdk.xcodeproj */,
+				6DC861EC1DFC34CD00A8AF24 /* RCTToast.xcodeproj */,
+				6DC861B11DFC2EFC00A8AF24 /* RCTWebRTC.xcodeproj */,
+				6DC861AB1DFC2EF300A8AF24 /* RNVectorIcons.xcodeproj */,
+				6DC8619F1DFC2EE400A8AF24 /* RNSound.xcodeproj */,
+				6DC861991DFC2EDE00A8AF24 /* ReactNativePermissions.xcodeproj */,
+			);
+			name = Projects;
+			sourceTree = "<group>";
+		};
+		6D597B2A1E0EF37F00DE3C49 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D597B301E0EF37F00DE3C49 /* libimsdk.a */,
+				6D597B321E0EF37F00DE3C49 /* imsdkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DAD3F1B1DF7B67700C70602 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6DAD3F251DF7CA0200C70602 /* jitsi.ttf */,
+				6DC861CA1DFC310400A8AF24 /* FontAwesome.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		6DC8619A1DFC2EDE00A8AF24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6DC8619E1DFC2EDE00A8AF24 /* libReactNativePermissions.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DC861A01DFC2EE400A8AF24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6DC861A41DFC2EE400A8AF24 /* libRNSound.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DC861AC1DFC2EF300A8AF24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6DC861B01DFC2EF300A8AF24 /* libRNVectorIcons.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DC861B21DFC2EFC00A8AF24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6DC861B61DFC2EFC00A8AF24 /* libRCTWebRTC.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DC861ED1DFC34CD00A8AF24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6DC861F11DFC34CE00A8AF24 /* libRCTToast.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DF3995B19EB9AAE009B03C4 = {
+			isa = PBXGroup;
+			children = (
+				6DAD3F1B1DF7B67700C70602 /* Resources */,
+				6DF3996D19EB9AAE009B03C4 /* conference */,
+				6DF3998F19EB9AAE009B03C4 /* conferenceTests */,
+				6D03316A1AAB7375004AA39F /* Projects */,
+				6DF3996619EB9AAE009B03C4 /* Frameworks */,
+				6DF3996519EB9AAE009B03C4 /* Products */,
+				CC15359EE8AA9E37C890A895 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		6DF3996519EB9AAE009B03C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6DF3996419EB9AAE009B03C4 /* conference.app */,
+				6DF3998819EB9AAE009B03C4 /* FaceTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6DF3996619EB9AAE009B03C4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6DC8618E1DFBEEBD00A8AF24 /* libToast.a */,
+				6D2E3FB81C7B6C4400707C00 /* libimsdk.a */,
+				6DF39BC819ED72D7009B03C4 /* libsqlite3.dylib */,
+				6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */,
+				6D4D55E01BA4033800247208 /* VideoToolbox.framework */,
+				6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */,
+				6DF39B2C19EBB649009B03C4 /* AVFoundation.framework */,
+				6DF39B2A19EBB617009B03C4 /* AudioToolbox.framework */,
+				6DF39B2819EBB607009B03C4 /* CoreMedia.framework */,
+				6DF3996719EB9AAE009B03C4 /* Foundation.framework */,
+				6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */,
+				6DF3996B19EB9AAE009B03C4 /* UIKit.framework */,
+				6DF3998919EB9AAE009B03C4 /* XCTest.framework */,
+				CB3F549160F6FDFD216FF7D0 /* libPods-conference.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6DF3996D19EB9AAE009B03C4 /* conference */ = {
+			isa = PBXGroup;
+			children = (
+				48C7A1391A065BD90020E7F6 /* sound */,
+				6DF399CD19EBA313009B03C4 /* controller */,
+				6DF3997619EB9AAE009B03C4 /* AppDelegate.h */,
+				6DF3997719EB9AAE009B03C4 /* AppDelegate.m */,
+				6D06CF181E0F68BF0048AC85 /* ViewController.h */,
+				6D06CF191E0F68BF0048AC85 /* ViewController.m */,
+				6D06CF471E0F6F220048AC85 /* ConferenceCommand.h */,
+				6D06CF481E0F6F220048AC85 /* ConferenceCommand.m */,
+				6DF3998219EB9AAE009B03C4 /* Images.xcassets */,
+				6DF3996E19EB9AAE009B03C4 /* Supporting Files */,
+			);
+			path = conference;
+			sourceTree = "<group>";
+		};
+		6DF3996E19EB9AAE009B03C4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6DF3996F19EB9AAE009B03C4 /* conference-Info.plist */,
+				6DF3997019EB9AAE009B03C4 /* InfoPlist.strings */,
+				6DF3997319EB9AAE009B03C4 /* main.m */,
+				6DF3997519EB9AAE009B03C4 /* conference-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6DF3998F19EB9AAE009B03C4 /* conferenceTests */ = {
+			isa = PBXGroup;
+			children = (
+				6DF3999519EB9AAE009B03C4 /* conferenceTests.m */,
+				6DF3999019EB9AAE009B03C4 /* Supporting Files */,
+			);
+			path = conferenceTests;
+			sourceTree = "<group>";
+		};
+		6DF3999019EB9AAE009B03C4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6DF3999119EB9AAE009B03C4 /* conferenceTests-Info.plist */,
+				6DF3999219EB9AAE009B03C4 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6DF399CD19EBA313009B03C4 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				6DFA633C1E12433C00F954F6 /* GroupVOIPViewController.h */,
+				6DFA633B1E12433C00F954F6 /* GroupVOIOPViewController.m */,
+				6D0C9BC51DF7A9B300582D38 /* ConferenceViewController.h */,
+				6D0C9BC61DF7A9B300582D38 /* ConferenceViewController.m */,
+			);
+			path = controller;
+			sourceTree = "<group>";
+		};
+		CC15359EE8AA9E37C890A895 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0A1342F85F42ADF8805E899A /* Pods-conference.debug.xcconfig */,
+				8E573407CB864F74916E4ED9 /* Pods-conference.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6DF3996319EB9AAE009B03C4 /* conference */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6DF3999919EB9AAE009B03C4 /* Build configuration list for PBXNativeTarget "conference" */;
+			buildPhases = (
+				0197DB1C4EFAA08D5FB39D21 /* [CP] Check Pods Manifest.lock */,
+				6DF3996019EB9AAE009B03C4 /* Sources */,
+				6DF3996119EB9AAE009B03C4 /* Frameworks */,
+				6DF3996219EB9AAE009B03C4 /* Resources */,
+				6D0C9B991DF7389200582D38 /* Bundle React Native code and images */,
+				6D45D8231DD89C5900FCAC19 /* Embed Frameworks */,
+				D9E8E65BADDA324B8C7B45AF /* [CP] Embed Pods Frameworks */,
+				160DA47FBF0FB09678B57CBA /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = conference;
+			productName = conference;
+			productReference = 6DF3996419EB9AAE009B03C4 /* conference.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6DF3998719EB9AAE009B03C4 /* conferenceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6DF3999C19EB9AAE009B03C4 /* Build configuration list for PBXNativeTarget "conferenceTests" */;
+			buildPhases = (
+				6DF3998419EB9AAE009B03C4 /* Sources */,
+				6DF3998519EB9AAE009B03C4 /* Frameworks */,
+				6DF3998619EB9AAE009B03C4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6DF3998E19EB9AAE009B03C4 /* PBXTargetDependency */,
+			);
+			name = conferenceTests;
+			productName = conferenceTests;
+			productReference = 6DF3998819EB9AAE009B03C4 /* FaceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6DF3995C19EB9AAE009B03C4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = beetle;
+				TargetAttributes = {
+					6DF3996319EB9AAE009B03C4 = {
+						DevelopmentTeam = HB5A8TLKYL;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 0;
+							};
+						};
+					};
+					6DF3998719EB9AAE009B03C4 = {
+						TestTargetID = 6DF3996319EB9AAE009B03C4;
+					};
+				};
+			};
+			buildConfigurationList = 6DF3995F19EB9AAE009B03C4 /* Build configuration list for PBXProject "conference" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = 6DF3995B19EB9AAE009B03C4;
+			productRefGroup = 6DF3996519EB9AAE009B03C4 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6D597B2A1E0EF37F00DE3C49 /* Products */;
+					ProjectRef = 6D597B291E0EF37F00DE3C49 /* imsdk.xcodeproj */;
+				},
+				{
+					ProductGroup = 6DC861ED1DFC34CD00A8AF24 /* Products */;
+					ProjectRef = 6DC861EC1DFC34CD00A8AF24 /* RCTToast.xcodeproj */;
+				},
+				{
+					ProductGroup = 6DC861B21DFC2EFC00A8AF24 /* Products */;
+					ProjectRef = 6DC861B11DFC2EFC00A8AF24 /* RCTWebRTC.xcodeproj */;
+				},
+				{
+					ProductGroup = 6DC8619A1DFC2EDE00A8AF24 /* Products */;
+					ProjectRef = 6DC861991DFC2EDE00A8AF24 /* ReactNativePermissions.xcodeproj */;
+				},
+				{
+					ProductGroup = 6DC861A01DFC2EE400A8AF24 /* Products */;
+					ProjectRef = 6DC8619F1DFC2EE400A8AF24 /* RNSound.xcodeproj */;
+				},
+				{
+					ProductGroup = 6DC861AC1DFC2EF300A8AF24 /* Products */;
+					ProjectRef = 6DC861AB1DFC2EF300A8AF24 /* RNVectorIcons.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				6DF3996319EB9AAE009B03C4 /* conference */,
+				6DF3998719EB9AAE009B03C4 /* conferenceTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6D597B301E0EF37F00DE3C49 /* libimsdk.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libimsdk.a;
+			remoteRef = 6D597B2F1E0EF37F00DE3C49 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D597B321E0EF37F00DE3C49 /* imsdkTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = imsdkTests.xctest;
+			remoteRef = 6D597B311E0EF37F00DE3C49 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6DC8619E1DFC2EDE00A8AF24 /* libReactNativePermissions.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativePermissions.a;
+			remoteRef = 6DC8619D1DFC2EDE00A8AF24 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6DC861A41DFC2EE400A8AF24 /* libRNSound.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSound.a;
+			remoteRef = 6DC861A31DFC2EE400A8AF24 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6DC861B01DFC2EF300A8AF24 /* libRNVectorIcons.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNVectorIcons.a;
+			remoteRef = 6DC861AF1DFC2EF300A8AF24 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6DC861B61DFC2EFC00A8AF24 /* libRCTWebRTC.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTWebRTC.a;
+			remoteRef = 6DC861B51DFC2EFC00A8AF24 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6DC861F11DFC34CE00A8AF24 /* libRCTToast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTToast.a;
+			remoteRef = 6DC861F01DFC34CE00A8AF24 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6DF3996219EB9AAE009B03C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48C7A13D1A065BDA0020E7F6 /* call.mp3 in Resources */,
+				6DF3998319EB9AAE009B03C4 /* Images.xcassets in Resources */,
+				6DF3997219EB9AAE009B03C4 /* InfoPlist.strings in Resources */,
+				6DAD3F261DF7CA0600C70602 /* jitsi.ttf in Resources */,
+				48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */,
+				6D401C201AAC925C0041ABC6 /* apns.caf in Resources */,
+				48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */,
+				6DC861CB1DFC310400A8AF24 /* FontAwesome.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6DF3998619EB9AAE009B03C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DF3999419EB9AAE009B03C4 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0197DB1C4EFAA08D5FB39D21 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		160DA47FBF0FB09678B57CBA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-conference/Pods-conference-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6D0C9B991DF7389200582D38 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh\n";
+		};
+		D9E8E65BADDA324B8C7B45AF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-conference/Pods-conference-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6DF3996019EB9AAE009B03C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D06CF1A1E0F68BF0048AC85 /* ViewController.m in Sources */,
+				6D0C9BC71DF7A9B300582D38 /* ConferenceViewController.m in Sources */,
+				6DFA633D1E12433C00F954F6 /* GroupVOIOPViewController.m in Sources */,
+				6D06CF491E0F6F220048AC85 /* ConferenceCommand.m in Sources */,
+				6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */,
+				6DF3997419EB9AAE009B03C4 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6DF3998419EB9AAE009B03C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DF3999619EB9AAE009B03C4 /* conferenceTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6DF3998E19EB9AAE009B03C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6DF3996319EB9AAE009B03C4 /* conference */;
+			targetProxy = 6DF3998D19EB9AAE009B03C4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6DF3997019EB9AAE009B03C4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6DF3997119EB9AAE009B03C4 /* en */,
+				48DC1A111A0686F6004EC222 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6DF3999219EB9AAE009B03C4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6DF3999319EB9AAE009B03C4 /* en */,
+				48DC1A121A0686F6004EC222 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6DF3999719EB9AAE009B03C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		6DF3999819EB9AAE009B03C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6DF3999A19EB9AAE009B03C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A1342F85F42ADF8805E899A /* Pods-conference.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
+				DEVELOPMENT_TEAM = HB5A8TLKYL;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-webrtc/**",
+					"$(PROJECT_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "conference/conference-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+					WEBRTC_IOS,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/leveldb-library/\"",
+					"\"${PODS_ROOT}/leveldb-library/include\"",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/FMDB\"",
+					"\"${PODS_ROOT}/Headers/Public/JSBadgeView\"",
+					"\"${PODS_ROOT}/Headers/Public/MBProgressHUD\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/ReflectionView\"",
+					"\"${PODS_ROOT}/Headers/Public/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/Public/Toast\"",
+					"\"${PODS_ROOT}/Headers/Public/UIImageView-Letters\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+				);
+				INFOPLIST_FILE = "conference/conference-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.beetle.conference;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "4be667f6-4e54-413b-a7f7-ca081b8ee87f";
+				PROVISIONING_PROFILE_SPECIFIER = wildcard2;
+				USER_HEADER_SEARCH_PATHS = conference/backend/;
+				VALID_ARCHS = "armv7 arm64 armv7s";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		6DF3999B19EB9AAE009B03C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8E573407CB864F74916E4ED9 /* Pods-conference.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhifeng Zhou (PV548P44SL)";
+				DEVELOPMENT_TEAM = HB5A8TLKYL;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-webrtc/**",
+					"$(PROJECT_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "conference/conference-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					WEBRTC_IOS,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/leveldb-library/\"",
+					"\"${PODS_ROOT}/leveldb-library/include\"",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/FMDB\"",
+					"\"${PODS_ROOT}/Headers/Public/JSBadgeView\"",
+					"\"${PODS_ROOT}/Headers/Public/MBProgressHUD\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/ReflectionView\"",
+					"\"${PODS_ROOT}/Headers/Public/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/Public/Toast\"",
+					"\"${PODS_ROOT}/Headers/Public/UIImageView-Letters\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+				);
+				INFOPLIST_FILE = "conference/conference-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.beetle.conference;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "aaebac94-51a0-4a13-86ea-f341c46beb99";
+				USER_HEADER_SEARCH_PATHS = conference/backend/;
+				VALID_ARCHS = "armv7 arm64 armv7s";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		6DF3999D19EB9AAE009B03C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/conference.app/conference";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "conference/conference-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "conferenceTests/conferenceTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.beetle.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		6DF3999E19EB9AAE009B03C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/conference.app/conference";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "conference/conference-Prefix.pch";
+				INFOPLIST_FILE = "conferenceTests/conferenceTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.beetle.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6DF3995F19EB9AAE009B03C4 /* Build configuration list for PBXProject "conference" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6DF3999719EB9AAE009B03C4 /* Debug */,
+				6DF3999819EB9AAE009B03C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6DF3999919EB9AAE009B03C4 /* Build configuration list for PBXNativeTarget "conference" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6DF3999A19EB9AAE009B03C4 /* Debug */,
+				6DF3999B19EB9AAE009B03C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6DF3999C19EB9AAE009B03C4 /* Build configuration list for PBXNativeTarget "conferenceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6DF3999D19EB9AAE009B03C4 /* Debug */,
+				6DF3999E19EB9AAE009B03C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6DF3995C19EB9AAE009B03C4 /* Project object */;
+}

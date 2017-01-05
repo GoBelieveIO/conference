@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_background"
+    android:orientation="vertical">
+
+    <!--发送用户id-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/line_initiator_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="60dp" />
+
+        <ImageView
+            android:id="@+id/iv_initiator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/line_initiator_underline"
+            android:layout_alignBottom="@id/line_initiator_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/initiator_username"
+            style="@style/login_edittext"
+            android:layout_above="@id/line_initiator_underline"
+            android:layout_alignBottom="@id/line_initiator_underline"
+            android:layout_toRightOf="@id/iv_initiator"
+            android:hint="@string/login_account" />
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/p1_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="44dp" />
+
+
+        <ImageView
+            android:id="@+id/p1_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p1_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/p1_username"
+            style="@style/login_edittext"
+            android:layout_alignBottom="@id/p1_underline"
+            android:layout_toRightOf="@id/p1_head"
+            android:hint="@string/partipant1" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/p2_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="44dp" />
+
+
+        <ImageView
+            android:id="@+id/p2_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p2_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/p2_username"
+            style="@style/login_edittext"
+            android:layout_alignBottom="@id/p2_underline"
+            android:layout_toRightOf="@id/p2_head"
+            android:hint="@string/partipant2" />
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/p3_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="44dp" />
+
+
+        <ImageView
+            android:id="@+id/p3_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p3_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/p3_username"
+            style="@style/login_edittext"
+            android:layout_alignBottom="@id/p3_underline"
+            android:layout_toRightOf="@id/p3_head"
+            android:hint="@string/partipant3" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/p4_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="44dp" />
+
+
+        <ImageView
+            android:id="@+id/p4_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p4_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/p4_username"
+            style="@style/login_edittext"
+            android:layout_alignBottom="@id/p4_underline"
+            android:layout_toRightOf="@id/p4_head"
+            android:hint="@string/partipant4" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="呼叫"
+            android:id="@+id/button"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="40dp"
+            android:clickable="true"
+            android:onClick="dial" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="接听"
+            android:id="@+id/button2"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
+            android:onClick="receiveCall"
+            android:clickable="true" />
+
+
+
+    </RelativeLayout>
+
+
+    <!--发送用户id-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/line_sender_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="60dp" />
+
+        <ImageView
+            android:id="@+id/iv_sender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/line_sender_underline"
+            android:layout_alignBottom="@id/line_sender_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/et_username"
+            style="@style/login_edittext"
+            android:layout_above="@id/line_sender_underline"
+            android:layout_alignBottom="@id/line_sender_underline"
+            android:layout_toRightOf="@id/iv_sender"
+            android:hint="@string/login_account" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/line_receiver_underline"
+            style="@style/login_edittext_underline"
+            android:layout_marginTop="44dp" />
+
+
+        <ImageView
+            android:id="@+id/iv_receiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/line_receiver_underline"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="22dp"
+            android:src="@drawable/ic_account" />
+
+        <EditText
+            android:id="@+id/conference_id"
+            style="@style/login_edittext"
+            android:layout_alignBottom="@id/line_receiver_underline"
+            android:layout_toRightOf="@id/iv_receiver"
+            android:hint="会议id" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="进入会议室"
+            android:id="@+id/button3"
+            android:onClick="enterRoom"
+            android:clickable="true" />
+    </RelativeLayout>
+
+
+</LinearLayout>
