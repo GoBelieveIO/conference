@@ -7,4 +7,8 @@ node_modules
 /android/local.properties
 /android/.idea/workspace.xml
 /android/.idea/libraries
+/android/.idea
+android/imsdk/build/
 .gradle
+*.iml
+.DS_Store
