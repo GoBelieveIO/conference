@@ -7,12 +7,12 @@
 //
 
 #import "GroupVOIPViewController.h"
-#import "RCTBundleURLProvider.h"
-#import "RCTRootView.h"
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTRootView.h>
 
-#import "RCTBridgeModule.h"
-#import "RCTBridge.h"
-#import "RCTEventDispatcher.h"
+#import <React/RCTBridgeModule.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
 #import <AVFoundation/AVFoundation.h>
 #import <imsdk/IMService.h>
 #import "AppDelegate.h"

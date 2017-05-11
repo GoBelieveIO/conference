@@ -2,15 +2,4 @@ platform :ios, '8.0'
 target 'conference' do
     pod 'MBProgressHUD'
     pod 'Toast'
-    pod 'React', :path => '../node_modules/react-native', :subspecs => [
-      'Core',
-      'RCTText',
-      'RCTWebSocket', # needed for debugging
-      'RCTActionSheet',
-      'RCTImage',
-      'RCTNetwork',
-      'RCTVibration',
-      'RCTGeolocation',
-    ]
-
 end

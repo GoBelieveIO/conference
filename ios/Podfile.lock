@@ -1,44 +1,15 @@
 PODS:
   - MBProgressHUD (1.0.0)
-  - React/Core (0.38.0)
-  - React/RCTActionSheet (0.38.0):
-    - React/Core
-  - React/RCTGeolocation (0.38.0):
-    - React/Core
-  - React/RCTImage (0.38.0):
-    - React/Core
-    - React/RCTNetwork
-  - React/RCTNetwork (0.38.0):
-    - React/Core
-  - React/RCTText (0.38.0):
-    - React/Core
-  - React/RCTVibration (0.38.0):
-    - React/Core
-  - React/RCTWebSocket (0.38.0):
-    - React/Core
   - Toast (3.1.0)
 
 DEPENDENCIES:
   - MBProgressHUD
-  - React/Core (from `../node_modules/react-native`)
-  - React/RCTActionSheet (from `../node_modules/react-native`)
-  - React/RCTGeolocation (from `../node_modules/react-native`)
-  - React/RCTImage (from `../node_modules/react-native`)
-  - React/RCTNetwork (from `../node_modules/react-native`)
-  - React/RCTText (from `../node_modules/react-native`)
-  - React/RCTVibration (from `../node_modules/react-native`)
-  - React/RCTWebSocket (from `../node_modules/react-native`)
   - Toast
-
-EXTERNAL SOURCES:
-  React:
-    :path: ../node_modules/react-native
 
 SPEC CHECKSUMS:
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
-  React: 3cdd13d7c8f6ad5c20216aa83e032f0ce4087944
   Toast: 14a93686d6c8bfe2727afd342414e35660a8a1f3
 
-PODFILE CHECKSUM: bf05fcf2216b6b3d0d824d313fa72bca301a9aaf
+PODFILE CHECKSUM: 999819690682b7b3770953c530e76d69d3ed0b0c
 
 COCOAPODS: 1.1.1
