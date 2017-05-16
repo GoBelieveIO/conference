@@ -204,7 +204,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         activityCount--;
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostDestroy();
+            mReactInstanceManager.onHostDestroy(this);
         }
 
     }
