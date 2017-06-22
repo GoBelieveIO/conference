@@ -110,7 +110,7 @@ RCT_EXPORT_METHOD(dismiss) {
                             @"channelID":self.channelID};
 
     
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"App" initialProperties:props];
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"GroupCall" initialProperties:props];
     
     // Set a background color which is in accord with the JavaScript and Android
     // parts of the application and causes less perceived visual flicker than the

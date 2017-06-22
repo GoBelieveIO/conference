@@ -60,6 +60,36 @@
     
     float startHeight = 40;
     UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(52, startHeight + 4, 180, 37)];
+    self.myTextField2 = textField;
+    self.myTextField2.textColor = [UIColor whiteColor];
+    self.myTextField2.font = [UIFont systemFontOfSize:18];
+    self.myTextField2.placeholder = @"我的id";
+    self.myTextField2.keyboardType = UIKeyboardTypeNumberPad;
+    [self.view addSubview:self.myTextField2];
+    
+    startHeight += 48;
+    textField = [[UITextField alloc] initWithFrame:CGRectMake(52, startHeight + 4, 180, 37)];
+    self.conferenceTextField = textField;
+    self.conferenceTextField.textColor = [UIColor whiteColor];
+    self.conferenceTextField.font = [UIFont systemFontOfSize:18];
+    self.conferenceTextField.placeholder = @"会议id";
+    self.conferenceTextField.keyboardType = UIKeyboardTypeNumberPad;
+    [self.view addSubview:self.conferenceTextField];
+    
+    startHeight += 48;
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame = CGRectMake(100, startHeight, 120, 48);
+    [btn setTitle:@"进入会议室" forState:UIControlStateNormal];
+    btn.titleLabel.font = [UIFont systemFontOfSize:17];
+    btn.tintColor = [UIColor blackColor];
+    btn.backgroundColor = [UIColor redColor];
+    
+    [btn addTarget:self action:@selector(enterRoom:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+    
+    
+    startHeight += 48;
+    textField = [[UITextField alloc] initWithFrame:CGRectMake(52, startHeight, 180, 37)];
     self.myTextField = textField;
     self.myTextField.textColor = [UIColor whiteColor];
     self.myTextField.font = [UIFont systemFontOfSize:18];
@@ -106,7 +136,7 @@
     
 
     startHeight += 60;
-    UIButton *btn  = [[UIButton alloc] initWithFrame:CGRectMake(10, startHeight, 120, 48)];
+    btn  = [[UIButton alloc] initWithFrame:CGRectMake(10, startHeight, 120, 48)];
     [btn setTitle:@"邀请" forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:17];
     btn.tintColor = [UIColor blackColor];
@@ -126,34 +156,7 @@
     [btn addTarget:self action:@selector(receiveCall:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     
-    startHeight += 48;
-    textField = [[UITextField alloc] initWithFrame:CGRectMake(52, startHeight + 4, 180, 37)];
-    self.myTextField2 = textField;
-    self.myTextField2.textColor = [UIColor whiteColor];
-    self.myTextField2.font = [UIFont systemFontOfSize:18];
-    self.myTextField2.placeholder = @"我的id";
-    self.myTextField2.keyboardType = UIKeyboardTypeNumberPad;
-    [self.view addSubview:self.myTextField2];
-    
-    startHeight += 48;
-    textField = [[UITextField alloc] initWithFrame:CGRectMake(52, startHeight + 4, 180, 37)];
-    self.conferenceTextField = textField;
-    self.conferenceTextField.textColor = [UIColor whiteColor];
-    self.conferenceTextField.font = [UIFont systemFontOfSize:18];
-    self.conferenceTextField.placeholder = @"会议id";
-    self.conferenceTextField.keyboardType = UIKeyboardTypeNumberPad;
-    [self.view addSubview:self.conferenceTextField];
-    
-    startHeight += 48;
-    btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.frame = CGRectMake(100, startHeight, 120, 48);
-    [btn setTitle:@"进入会议室" forState:UIControlStateNormal];
-    btn.titleLabel.font = [UIFont systemFontOfSize:17];
-    btn.tintColor = [UIColor blackColor];
-    btn.backgroundColor = [UIColor redColor];
-    
-    [btn addTarget:self action:@selector(enterRoom:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn];
+
     
     
     
@@ -178,11 +181,14 @@
     [self.myTextField2 resignFirstResponder];
     [self.conferenceTextField resignFirstResponder];
     
-    int64_t myUID = [self.myTextField2.text longLongValue];
-    NSString *conferenceID = self.conferenceTextField.text;
-    if (myUID == 0 || conferenceID.length == 0) {
-        return;
-    }
+//    int64_t myUID = [self.myTextField2.text longLongValue];
+//    NSString *conferenceID = self.conferenceTextField.text;
+//    if (myUID == 0 || conferenceID.length == 0) {
+//        return;
+//    }
+    
+    int64_t myUID = 1;
+    NSString *conferenceID = @"1000";
     
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:NO];
     self.hud.label.text = @"登录中...";
