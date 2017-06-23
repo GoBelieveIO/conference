@@ -609,8 +609,8 @@ function WebRtcPeer(mode, options, callback) {
 
             navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
                 videoStream = stream
-                self.emit('localstream', stream);
                 start()
+                self.emit('localstream', stream);                
             }).catch(callback);
         }
         if (sendSource === 'webcam') {

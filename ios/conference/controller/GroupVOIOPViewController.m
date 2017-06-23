@@ -106,8 +106,8 @@ RCT_EXPORT_METHOD(dismiss) {
                                                launchOptions:nil];
     
 
-    NSDictionary *props = @{@"group":@YES,
-                            @"channelID":self.channelID};
+    NSDictionary *props = @{@"name":@"testios",
+                            @"room":@"2000"};
 
     
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"GroupCall" initialProperties:props];
