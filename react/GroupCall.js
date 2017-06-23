@@ -241,7 +241,8 @@ class GroupCall extends Component {
                     <Text style={{color:"white", fontSize:20}}>
                         {duration}
                     </Text>
-
+                    
+                
                     <View style={{height:40,
                                   width:"100%",
                                   marginTop:40,
@@ -254,7 +255,15 @@ class GroupCall extends Component {
                                                        backgroundColor:"white",
                                                        justifyContent: 'center'}}
                                             underlayColor="aliceblue">
-                            <Text>{audioMuted ? "\\静音\\" : "静音"}</Text>
+                            <View>
+                                <Text>静音</Text>
+                                {audioMuted ? 
+                                 <View style={{top:-8,
+                                               height:1,
+                                               backgroundColor:"black",
+                                               transform: [{ rotate: '25deg'}]}}/> :
+                                 null}
+                            </View>
                         </TouchableHighlight>
 
                         
@@ -265,7 +274,7 @@ class GroupCall extends Component {
                                                 backgroundColor:"red",
                                                 justifyContent: 'center'
                                             }}
-                                            underlayColor="red" >
+                                            underlayColor="crimson" >
                             <Text>挂断</Text>
                         </TouchableHighlight>
                         
