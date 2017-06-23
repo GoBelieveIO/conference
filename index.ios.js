@@ -1,1 +1,1 @@
-export * from './react/index.native';
+export * from './react/index';

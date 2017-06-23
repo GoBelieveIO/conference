@@ -25,8 +25,6 @@ var native = (Platform.OS == 'android') ?
              NativeModules.GroupVOIPViewController;
 
 
-var Sound = require('react-native-sound');
-
 var Participant = require('./participant.js');
 
 var WebRtcPeer = require('./WebRtcPeer.js');
