@@ -207,7 +207,9 @@ class GroupCall extends Component {
         var remoteViews = [];
         participants = this.state.participants;
         console.log("participants:", participants.length);
-        
+
+        var h = ScreenWidth*0.5;
+        var w = ScreenWidth*0.5;
         for (var i = 0; i < participants.length; i+= 2) {
             if (i + 1 < participants.length) {
                 var participant1 = participants[i];
@@ -215,9 +217,9 @@ class GroupCall extends Component {
                 var videoURL1 = participant1.videoURL;
                 var videoURL2 = participant2.videoURL;
                 remoteViews.push((
-                    <View style={{height:160, flex:1, flexDirection:"row"}} key={i} >
-                        <RTCView style={{height:160, width:ScreenWidth*0.5}} objectFit="cover" streamURL={videoURL1}/>
-                        <RTCView style={{height:160, width:ScreenWidth*0.5}} objectFit="cover" streamURL={videoURL2}/>
+                    <View style={{height:h, flex:1, flexDirection:"row"}} key={i} >
+                        <RTCView style={{height:h, width:w}} objectFit="cover" streamURL={videoURL1}/>
+                        <RTCView style={{height:h, width:w}} objectFit="cover" streamURL={videoURL2}/>
                     </View>
                 ));
             } else {
@@ -225,8 +227,8 @@ class GroupCall extends Component {
                 var videoURL = participant.videoURL;
                 
                 remoteViews.push((
-                    <View style={{height:160, flex:1, flexDirection:"row", justifyContent:"center"}} key={i}>
-                        <RTCView style={{height:160, width:ScreenWidth*0.5}} objectFit="cover" streamURL={videoURL}/>
+                    <View style={{height:h, flex:1, flexDirection:"row", justifyContent:"center"}} key={i}>
+                        <RTCView style={{height:h, width:w}} objectFit="cover" streamURL={videoURL}/>
                     </View>
                 ))
             }
@@ -292,8 +294,6 @@ class GroupCall extends Component {
             </View>
         );
     }
-    
-
  
     _toggleAudio() {
         console.log("toggle audio");

@@ -14,11 +14,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTEventDispatcher.h>
 #import <AVFoundation/AVFoundation.h>
-#import <imsdk/IMService.h>
 #import "AppDelegate.h"
-#import "ConferenceCommand.h"
-
-
 
 
 static int64_t g_controllerCount = 0;
@@ -106,8 +102,9 @@ RCT_EXPORT_METHOD(dismiss) {
                                                launchOptions:nil];
     
 
-    NSDictionary *props = @{@"name":@"testios",
-                            @"room":@"2000"};
+    NSString *name = [NSString stringWithFormat:@"%lld",self.currentUID];
+    NSDictionary *props = @{@"name":name,
+                            @"room":self.channelID};
 
     
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"GroupCall" initialProperties:props];
