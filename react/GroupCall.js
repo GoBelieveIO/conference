@@ -31,7 +31,7 @@ var WebRtcPeer = require('./WebRtcPeer.js');
 
 var ScreenWidth = Dimensions.get('window').width;
 
-const WS_URL = 'wss://112.74.207.185:8443/groupcall';
+const WS_URL = 'wss://jitsi.gobelieve.io/groupcall';
 
 /**
  * The groupvoip page of the application.
