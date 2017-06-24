@@ -30,7 +30,6 @@ import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.uimanager.ViewManager;
 import com.joshblour.reactnativepermissions.ReactNativePermissionsPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 import com.oney.WebRTCModule.WebRTCModulePackage;
 import com.remobile.toast.RCTToastPackage;
 import com.zmxv.RNSound.RNSoundPackage;
@@ -148,7 +147,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
                 .addPackage(new ConferencePackage())
-                .addPackage(new VectorIconsPackage())
                 .addPackage(new WebRTCModulePackage())
                 .addPackage(new ReactNativePermissionsPackage())
                 .addPackage(new RCTToastPackage())
@@ -158,10 +156,10 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
                 .build();
 
         Bundle props = new Bundle();
-        props.putString("channelID", channelID);
-        props.putBoolean("group", true);
+        props.putString("room", channelID);
+        props.putString("name", ""+currentUID);
 
-        mReactRootView.startReactApplication(mReactInstanceManager, "App", props);
+        mReactRootView.startReactApplication(mReactInstanceManager, "GroupCall", props);
         setContentView(mReactRootView);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
