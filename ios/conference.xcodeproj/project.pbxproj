@@ -51,6 +51,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6D0577131F4C301A0040F519 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D05770C1F4C301A0040F519 /* imsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D032F181AA993C0004AA39F;
+			remoteInfo = imsdk;
+		};
+		6D0577151F4C301A0040F519 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D05770C1F4C301A0040F519 /* imsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D032F231AA993C0004AA39F;
+			remoteInfo = imsdkTests;
+		};
+		6D0577311F4C302F0040F519 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D05770C1F4C301A0040F519 /* imsdk.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6D032F171AA993C0004AA39F;
+			remoteInfo = imsdk;
+		};
 		6D6958291EC1B6BF008EC867 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6D6958211EC1B6BF008EC867 /* RCTText.xcodeproj */;
@@ -284,6 +305,7 @@
 		48C7A13C1A065BDA0020E7F6 /* start.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = start.mp3; sourceTree = "<group>"; };
 		48DC1A111A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		48DC1A121A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		6D05770C1F4C301A0040F519 /* imsdk.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = imsdk.xcodeproj; path = imsdk/imsdk.xcodeproj; sourceTree = "<group>"; };
 		6D06CF181E0F68BF0048AC85 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		6D06CF191E0F68BF0048AC85 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
@@ -390,6 +412,7 @@
 		6D03316A1AAB7375004AA39F /* Projects */ = {
 			isa = PBXGroup;
 			children = (
+				6D05770C1F4C301A0040F519 /* imsdk.xcodeproj */,
 				6D69591A1EC1CC87008EC867 /* RNBackgroundTimer.xcodeproj */,
 				6D6958F51EC1C3EF008EC867 /* RCTWebSocket.xcodeproj */,
 				6D6958771EC1B778008EC867 /* RCTAnimation.xcodeproj */,
@@ -406,6 +429,15 @@
 				6DC861991DFC2EDE00A8AF24 /* ReactNativePermissions.xcodeproj */,
 			);
 			name = Projects;
+			sourceTree = "<group>";
+		};
+		6D05770D1F4C301A0040F519 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D0577141F4C301A0040F519 /* libimsdk.a */,
+				6D0577161F4C301A0040F519 /* imsdkTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		6D6958221EC1B6BF008EC867 /* Products */ = {
@@ -663,6 +695,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6D0577321F4C302F0040F519 /* PBXTargetDependency */,
 				6D6958821EC1B7F9008EC867 /* PBXTargetDependency */,
 			);
 			name = conference;
@@ -728,6 +761,10 @@
 					ProjectRef = 6D6958711EC1B74D008EC867 /* ART.xcodeproj */;
 				},
 				{
+					ProductGroup = 6D05770D1F4C301A0040F519 /* Products */;
+					ProjectRef = 6D05770C1F4C301A0040F519 /* imsdk.xcodeproj */;
+				},
+				{
 					ProductGroup = 6D6958781EC1B778008EC867 /* Products */;
 					ProjectRef = 6D6958771EC1B778008EC867 /* RCTAnimation.xcodeproj */;
 				},
@@ -789,6 +826,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6D0577141F4C301A0040F519 /* libimsdk.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libimsdk.a;
+			remoteRef = 6D0577131F4C301A0040F519 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D0577161F4C301A0040F519 /* imsdkTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = imsdkTests.xctest;
+			remoteRef = 6D0577151F4C301A0040F519 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6D69582A1EC1B6BF008EC867 /* libRCTText.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1096,6 +1147,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6D0577321F4C302F0040F519 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = imsdk;
+			targetProxy = 6D0577311F4C302F0040F519 /* PBXContainerItemProxy */;
+		};
 		6D6958821EC1B7F9008EC867 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = React;
