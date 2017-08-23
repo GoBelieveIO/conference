@@ -84,8 +84,9 @@ var dumpSDP = function (description) {
 function bufferizeCandidates(pc, onerror) {
     var candidatesQueue = []
     pc.onsignalingstatechange = function() {
+        console.log("onsignalingstatechange");
+        
         if (this.signalingState === 'stable') {
-
             while (candidatesQueue.length) {
                 var entry = candidatesQueue.shift()
                 console.log("add ice1111");
@@ -95,9 +96,11 @@ function bufferizeCandidates(pc, onerror) {
     };
     
     pc.onaddstream = function(stream) {
+        console.log("on add stream");
         if (this.signalingState === 'stable') { 
             while (candidatesQueue.length) {
                 var entry = candidatesQueue.shift()
+                console.log("add ice222");                
                 this.addIceCandidate(entry.candidate, entry.callback, entry.callback)
             }
         }
@@ -122,7 +125,7 @@ function bufferizeCandidates(pc, onerror) {
                 break
             case 'stable':
                 if (pc.remoteDescription) {
-                    console.log("add ice222");
+                    console.log("add ice444");
                     pc.addIceCandidate(candidate, callback, callback)
                     break
                 }
@@ -371,7 +374,7 @@ function WebRtcPeer(mode, options, callback) {
     })
 
     var addIceCandidate = bufferizeCandidates(pc)
-
+    var flushIceCandidate = addIceCandidate;
     /**
      * Callback function invoked when an ICE candidate is received. Developers are
      * expected to invoke this function in order to complete the SDP negotiation.
@@ -501,6 +504,7 @@ function WebRtcPeer(mode, options, callback) {
                                 function () {
                                     setRemoteVideo()
                                     callback()
+                                    flushIceCandidate()
                                 },
                                 callback)
     }
