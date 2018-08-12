@@ -64,8 +64,10 @@ static int64_t g_controllerCount = 0;
 
 @property(nonatomic, strong) RCTBridge *reactBridge;
 
-@property(nonatomic) UIButton *hangUpButton;
-
+@property(nonatomic, weak) UIButton *cameraButton;
+@property(nonatomic, weak) UIButton *muteButton;
+@property(nonatomic, weak) UIButton *hangUpButton;
+@property(nonatomic, weak) UIScrollView *scrollView;
 @end
 
 @implementation GroupVOIPViewController
@@ -202,8 +204,23 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
 
     
     
+
     
-    self.hangUpButton = [[UIButton alloc] init];
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
+    self.scrollView = scrollView;
+    [self.view addSubview:self.scrollView];
+    
+    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(self.view.mas_width);
+        make.width.equalTo(self.view.mas_width);
+        make.top.equalTo(self.view.mas_top).with.offset(60);
+    }];
+    
+
+    
+    
+    UIButton *hangUpButton = [[UIButton alloc] init];
+    self.hangUpButton = hangUpButton;
     [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
     [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
     [self.hangUpButton addTarget:self
@@ -215,6 +232,34 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
         make.centerX.equalTo(self.view.mas_centerX);
         make.size.mas_equalTo(CGSizeMake(kBtnWidth, kBtnHeight));
         make.bottom.equalTo(self.view.mas_bottom).with.offset(-80);
+    }];
+    
+    UIButton *muteButton = [[UIButton alloc] init];
+    self.muteButton = muteButton;
+    [self.muteButton setImage:[UIImage imageNamed:@"unmute"] forState:UIControlStateNormal];
+    [self.muteButton addTarget:self
+                        action:@selector(mute:)
+              forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.muteButton];
+    
+    [self.muteButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.view.mas_right).with.multipliedBy(0.25);
+        make.size.mas_equalTo(CGSizeMake(42, 42));
+        make.bottom.equalTo(self.view.mas_bottom).with.offset(-95);
+    }];
+    
+    UIButton *cameraButton = [[UIButton alloc] init];
+    self.cameraButton = cameraButton;
+    [self.cameraButton setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
+    [self.cameraButton addTarget:self
+                          action:@selector(toggleCamera:)
+                forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.cameraButton];
+    
+    [self.cameraButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.view.mas_right).with.multipliedBy(0.75);
+        make.size.mas_equalTo(CGSizeMake(42, 42));
+        make.bottom.equalTo(self.view.mas_bottom).with.offset(-95);
     }];
     
     
@@ -311,14 +356,36 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
                                             body:event];
 }
 
-
--(Participant*)createLocalParticipant {
+-(Participant*)createTestParticipant {
     Participant *p = [[Participant alloc] init];
+    p.local = NO;
+
+    
     p.videoView = [[WebRTCVideoView alloc] initWithFrame:CGRectZero];
     p.videoView.objectFit = WebRTCVideoViewObjectFitCover;
     p.videoView.clipsToBounds = YES;
+    p.videoView.backgroundColor = [UIColor redColor];
+    
+    CGFloat w = self.view.frame.size.width/2;
+    CGFloat h = w;
+    CGFloat y = h*(self.participants.count/2);
+    CGFloat x = w*(self.participants.count%2);
+    p.videoView.frame = CGRectMake(x, y, w, h);
+    [self.scrollView addSubview:p.videoView];
+    [self.participants addObject:p];
+    
+    self.scrollView.contentSize = CGSizeMake(w*2, h*(self.participants.count%2+self.participants.count/2));
+    
+    return p;
+}
+
+-(Participant*)createLocalParticipant {
+    Participant *p = [[Participant alloc] init];
     p.uid = self.currentUID;
     p.local = YES;
+    p.videoView = [[WebRTCVideoView alloc] initWithFrame:CGRectZero];
+    p.videoView.objectFit = WebRTCVideoViewObjectFitCover;
+    p.videoView.clipsToBounds = YES;
     
     __weak GroupVOIPViewController *wself = self;
     p.offerCB = ^(Participant *p, RTCSessionDescription *sdp) {
@@ -337,6 +404,19 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
     };
     
     [p createPeerConnection:self.factory];
+
+    UITapGestureRecognizer* singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(switchCamera:)];
+    [p.videoView addGestureRecognizer:singleTap];
+
+    CGFloat w = self.view.frame.size.width/2;
+    CGFloat h = w;
+    CGFloat y = h*(self.participants.count/2);
+    CGFloat x = w*(self.participants.count%2);
+    p.videoView.frame = CGRectMake(x, y, w, h);
+    [self.scrollView addSubview:p.videoView];
+    
+    [self.participants addObject:p];
+    self.scrollView.contentSize = CGSizeMake(w*2, h*(self.participants.count%2+self.participants.count/2));
     return p;
 }
 
@@ -344,10 +424,13 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
 -(Participant*)createRemoteParticipant:(int64_t)peer {
     Participant *p = [[Participant alloc] init];
     p.local = NO;
+    p.uid = peer;
+
     p.videoView = [[WebRTCVideoView alloc] initWithFrame:CGRectZero];
     p.videoView.objectFit = WebRTCVideoViewObjectFitCover;
     p.videoView.clipsToBounds = YES;
-    p.uid = peer;
+
+    
     __weak GroupVOIPViewController *wself = self;
     p.offerCB = ^(Participant *p, RTCSessionDescription *sdp) {
         NSDictionary *msg = @{@"id":@"receiveVideoFrom", @"sender":@(p.uid), @"sdpOffer":sdp.sdp};
@@ -365,26 +448,26 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
     };
     
     [p createRemotePeerConnection:self.factory];
+    
+    CGFloat w = self.view.frame.size.width/2;
+    CGFloat h = w;
+    CGFloat y = h*(self.participants.count/2);
+    CGFloat x = w*(self.participants.count%2);
+    p.videoView.frame = CGRectMake(x, y, w, h);
+    [self.scrollView addSubview:p.videoView];
+    
+    [self.participants addObject:p];
+
+    self.scrollView.contentSize = CGSizeMake(w*2, h*(self.participants.count%2+self.participants.count/2));
+    
     return p;
 }
 
 -(void)onExistingParticipants:(NSDictionary*)msg {
-    Participant *p = [self createLocalParticipant];
-    [self.participants addObject:p];
-
-    CGFloat x = 0;
-    p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
-    [self.view addSubview:p.videoView];
-    
+    [self createLocalParticipant];
     NSArray *data = [msg objectForKey:@"data"];
-    
     for (NSString *pid in data) {
-        p = [self createRemoteParticipant:[pid longLongValue]];
-        [self.participants addObject:p];
-        x += 80;
-        p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
-        
-        [self.view addSubview:p.videoView];
+        [self createRemoteParticipant:[pid longLongValue]];
     }
 }
 
@@ -431,12 +514,7 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
         return;
     }
     
-    Participant *p = [self createRemoteParticipant:pid];
-    [self.participants addObject:p];
-    
-    CGFloat x= (self.participants.count - 1)*80;
-    p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
-    [self.view addSubview:p.videoView];
+    [self createRemoteParticipant:pid];
 }
 
 -(void)onParticipantLeft:(NSDictionary*)msg {
@@ -459,12 +537,18 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
     [self.participants removeObjectAtIndex:index];
     [p.videoView removeFromSuperview];
     p.videoView = nil;
-    
-    CGFloat x = 0;
-    for (Participant *p in self.participants) {
-        p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
-        x += 80;
+
+    for (NSInteger i = 0; i < self.participants.count; i++) {
+        CGFloat w = self.view.frame.size.width/2;
+        CGFloat h = w;
+        CGFloat y = h*(i/2);
+        CGFloat x = w*(i%2);
+        p.videoView.frame = CGRectMake(x, y, w, h);
     }
+    
+    CGFloat w = self.view.frame.size.width/2;
+    CGFloat h = w;
+    self.scrollView.contentSize = CGSizeMake(w, h*(self.participants.count%2+self.participants.count/2));
 }
 
 
@@ -488,6 +572,56 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
     [p.peerConnection addIceCandidate:ice];
 }
 
+-(void)switchCamera:(id)sender {
+    if (self.participants.count == 0) {
+        return;
+    }
+    Participant *p = [self.participants objectAtIndex:0];
+    if (p.uid != self.currentUID) {
+        return;
+    }
+    if (!p.videoTrack.isEnabled) {
+        return;
+    }
+    
+    NSLog(@"switch camera...");
+    RTCVideoSource* source = p.videoTrack.source;
+    if ([source isKindOfClass:[RTCAVFoundationVideoSource class]]) {
+        RTCAVFoundationVideoSource* avSource = (RTCAVFoundationVideoSource*)source;
+        avSource.useBackCamera = !avSource.useBackCamera;
+    }
+}
+
+-(void)mute:(id)sender {
+    if (self.participants.count == 0) {
+        return;
+    }
+    Participant *p = [self.participants objectAtIndex:0];
+    if (p.uid != self.currentUID) {
+        return;
+    }
+    
+    NSLog(@"toogle audio...");
+    p.audioTrack.isEnabled = !p.audioTrack.isEnabled;
+    if (p.audioTrack.isEnabled) {
+        [self.muteButton setImage:[UIImage imageNamed:@"unmute"] forState:UIControlStateNormal];
+    } else {
+        [self.muteButton setImage:[UIImage imageNamed:@"mute"] forState:UIControlStateNormal];
+    }
+}
+
+-(void)toggleCamera:(id)sender {
+    if (self.participants.count == 0) {
+        return;
+    }
+    Participant *p = [self.participants objectAtIndex:0];
+    if (p.uid != self.currentUID) {
+        return;
+    }
+
+    NSLog(@"toogle camera camera...");
+    p.videoTrack.isEnabled = !p.videoTrack.isEnabled;
+}
 
 
 -(int)setLoudspeakerStatus:(BOOL)enable {
