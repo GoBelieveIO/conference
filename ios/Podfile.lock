@@ -1,15 +1,24 @@
 PODS:
+  - Masonry (1.0.2)
   - MBProgressHUD (1.0.0)
   - Toast (3.1.0)
 
 DEPENDENCIES:
+  - Masonry (~> 1.0.2)
   - MBProgressHUD
   - Toast
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Masonry
+    - MBProgressHUD
+    - Toast
+
 SPEC CHECKSUMS:
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   Toast: 14a93686d6c8bfe2727afd342414e35660a8a1f3
 
-PODFILE CHECKSUM: 999819690682b7b3770953c530e76d69d3ed0b0c
+PODFILE CHECKSUM: db5f361b0526d99d7bf0f870af1a919d8ede42eb
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.5.3

@@ -29,6 +29,8 @@
 		6D6959081EC1C733008EC867 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861A41DFC2EE400A8AF24 /* libRNSound.a */; };
 		6D6959091EC1C73C008EC867 /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC8619E1DFC2EDE00A8AF24 /* libReactNativePermissions.a */; };
 		6D69593E1EC1CC93008EC867 /* libRNBackgroundTimer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D69593B1EC1CC87008EC867 /* libRNBackgroundTimer.a */; };
+		6DA446F3212015A100278F38 /* Participant.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA446F2212015A000278F38 /* Participant.m */; };
+		6DA447052120683B00278F38 /* WebRTCVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA447042120683B00278F38 /* WebRTCVideoView.m */; };
 		6DC861BA1DFC2F2A00A8AF24 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */; };
 		6DC861C21DFC2FCB00A8AF24 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
@@ -321,6 +323,10 @@
 		6D6958771EC1B778008EC867 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		6D6958F51EC1C3EF008EC867 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		6D69591A1EC1CC87008EC867 /* RNBackgroundTimer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNBackgroundTimer.xcodeproj; path = "../node_modules/react-native-background-timer/ios/RNBackgroundTimer.xcodeproj"; sourceTree = "<group>"; };
+		6DA446F1212015A000278F38 /* Participant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Participant.h; sourceTree = "<group>"; };
+		6DA446F2212015A000278F38 /* Participant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Participant.m; sourceTree = "<group>"; };
+		6DA447032120683B00278F38 /* WebRTCVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoView.h; sourceTree = "<group>"; };
+		6DA447042120683B00278F38 /* WebRTCVideoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebRTCVideoView.m; sourceTree = "<group>"; };
 		6DC861991DFC2EDE00A8AF24 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		6DC8619F1DFC2EE400A8AF24 /* RNSound.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSound.xcodeproj; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; };
 		6DC861B11DFC2EFC00A8AF24 /* RCTWebRTC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebRTC.xcodeproj; path = "../node_modules/react-native-webrtc/ios/RCTWebRTC.xcodeproj"; sourceTree = "<group>"; };
@@ -654,8 +660,12 @@
 		6DF399CD19EBA313009B03C4 /* controller */ = {
 			isa = PBXGroup;
 			children = (
+				6DA446F1212015A000278F38 /* Participant.h */,
+				6DA446F2212015A000278F38 /* Participant.m */,
 				6DFA633C1E12433C00F954F6 /* GroupVOIPViewController.h */,
 				6DFA633B1E12433C00F954F6 /* GroupVOIOPViewController.m */,
+				6DA447032120683B00278F38 /* WebRTCVideoView.h */,
+				6DA447042120683B00278F38 /* WebRTCVideoView.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -689,8 +699,6 @@
 				6DF3996219EB9AAE009B03C4 /* Resources */,
 				6D0C9B991DF7389200582D38 /* Bundle React Native code and images */,
 				6D45D8231DD89C5900FCAC19 /* Embed Frameworks */,
-				D9E8E65BADDA324B8C7B45AF /* [CP] Embed Pods Frameworks */,
-				160DA47FBF0FB09678B57CBA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1069,28 +1077,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-conference-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		160DA47FBF0FB09678B57CBA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-conference/Pods-conference-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6D0C9B991DF7389200582D38 /* Bundle React Native code and images */ = {
@@ -1107,21 +1103,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh\n";
 		};
-		D9E8E65BADDA324B8C7B45AF /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-conference/Pods-conference-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1131,8 +1112,10 @@
 			files = (
 				6D06CF1A1E0F68BF0048AC85 /* ViewController.m in Sources */,
 				6DFA633D1E12433C00F954F6 /* GroupVOIOPViewController.m in Sources */,
+				6DA446F3212015A100278F38 /* Participant.m in Sources */,
 				6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */,
 				6DF3997419EB9AAE009B03C4 /* main.m in Sources */,
+				6DA447052120683B00278F38 /* WebRTCVideoView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1328,8 +1311,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.beetle.conference;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4be667f6-4e54-413b-a7f7-ca081b8ee87f";
-				PROVISIONING_PROFILE_SPECIFIER = wildcard2;
+				PROVISIONING_PROFILE = "cf511cd2-d4f8-479c-8ab0-90688c2bc7ea";
+				PROVISIONING_PROFILE_SPECIFIER = wildcard;
 				USER_HEADER_SEARCH_PATHS = conference/backend/;
 				VALID_ARCHS = "armv7 arm64 armv7s";
 				WRAPPER_EXTENSION = app;
@@ -1394,7 +1377,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.beetle.conference;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "aaebac94-51a0-4a13-86ea-f341c46beb99";
+				PROVISIONING_PROFILE = "cf511cd2-d4f8-479c-8ab0-90688c2bc7ea";
+				PROVISIONING_PROFILE_SPECIFIER = wildcard;
 				USER_HEADER_SEARCH_PATHS = conference/backend/;
 				VALID_ARCHS = "armv7 arm64 armv7s";
 				WRAPPER_EXTENSION = app;

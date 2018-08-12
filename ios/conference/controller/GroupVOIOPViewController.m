@@ -14,13 +14,58 @@
 #import <React/RCTBridge.h>
 #import <React/RCTEventDispatcher.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Masonry/Masonry.h>
+
 #import "AppDelegate.h"
+#import "Participant.h"
+#import "WebRTCVideoView.h"
+
+#define kBtnWidth  72
+#define kBtnHeight 72
+
+#define kVideoViewWidth 160
+#define kVideoViewHeight 160
+
+@interface RTCIceCandidate (GroupCall)
+
++ (RTCIceCandidate *)candidateFromJSONDictionary2:(NSDictionary *)dictionary;
+- (NSDictionary *)JSONDictionary2;
+@end
+
+@implementation RTCIceCandidate(GroupCall)
++ (RTCIceCandidate *)candidateFromJSONDictionary2:(NSDictionary *)dictionary {
+    NSString *mid = dictionary[@"sdpMid"];
+    NSString *sdp = dictionary[@"candidate"];
+    NSNumber *num = dictionary[@"sdpMLineIndex"];
+    int mLineIndex = [num intValue];
+    return [[RTCIceCandidate alloc] initWithSdp:sdp
+                                  sdpMLineIndex:mLineIndex
+                                         sdpMid:mid];
+}
+- (NSDictionary *)JSONDictionary2 {
+    NSDictionary *json = @{
+                           @"sdpMLineIndex" : @(self.sdpMLineIndex),
+                           @"sdpMid" : self.sdpMid,
+                           @"candidate" : self.sdp
+                           };
+    return json;
+}
+@end
 
 
 static int64_t g_controllerCount = 0;
 
+
+
+
 @interface GroupVOIPViewController ()<RCTBridgeModule>
-@property(nonatomic, weak) RCTBridge *bridge;
+@property(nonatomic, strong) RTCPeerConnectionFactory *factory;
+@property(nonatomic) NSMutableArray *participants;
+
+@property(nonatomic, strong) RCTBridge *reactBridge;
+
+@property(nonatomic) UIButton *hangUpButton;
+
 @end
 
 @implementation GroupVOIPViewController
@@ -36,9 +81,39 @@ RCT_EXPORT_METHOD(dismiss) {
 }
 
 
+RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
+    NSLog(@"conference message:%@ channel id:%@", msg, channelID);
+    if (![self.channelID isEqualToString:channelID]) {
+        NSLog(@"channel id invalid:%@ %@", self.channelID, channelID);
+        return;
+    }
+    
+    NSString *msgId = [msg objectForKey:@"id"];
+    
+    if ([msgId isEqualToString:@"existingParticipants"]) {
+        [self onExistingParticipants:msg];
+    } else if ([msgId isEqualToString:@"newParticipantArrived"]) {
+        [self onNewParticipantArrived:msg];
+    } else if ([msgId isEqualToString:@"participantLeft"]) {
+        [self onParticipantLeft:msg];
+    } else if ([msgId isEqualToString:@"receiveVideoAnswer"]) {
+        [self onReceiveVideoAnswer:msg];
+    } else if ([msgId isEqualToString:@"iceCandidate"]) {
+        [self onIceCandidate:msg];
+    } else {
+        NSLog(@"unrecognized message:%@", msg);
+    }
+}
+
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
+}
+
+
 +(int64_t)controllerCount {
     return g_controllerCount;
 }
+
 
 //http://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example
 - (void)didSessionRouteChange:(NSNotification *)notification
@@ -72,11 +147,6 @@ RCT_EXPORT_METHOD(dismiss) {
 }
 
 
-- (dispatch_queue_t)methodQueue {
-    return dispatch_get_main_queue();
-}
-
-
 -(void)dealloc {
     g_controllerCount--;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -85,6 +155,10 @@ RCT_EXPORT_METHOD(dismiss) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     g_controllerCount++;
+    
+    self.factory = [[RTCPeerConnectionFactory alloc] init];
+    self.participants = [NSMutableArray array];
+    
     
     __weak GroupVOIPViewController *wself = self;
     RCTBridgeModuleProviderBlock provider = ^NSArray<id<RCTBridgeModule>> *{
@@ -101,25 +175,11 @@ RCT_EXPORT_METHOD(dismiss) {
                                               moduleProvider:provider
                                                launchOptions:nil];
     
-
-    NSString *name = [NSString stringWithFormat:@"%lld",self.currentUID];
-    NSDictionary *props = @{@"name":name,
-                            @"room":self.channelID};
-
+    self.reactBridge = bridge;
     
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"GroupCall" initialProperties:props];
-    
-    // Set a background color which is in accord with the JavaScript and Android
-    // parts of the application and causes less perceived visual flicker than the
-    // default background color.
-    rootView.backgroundColor = [[UIColor alloc] initWithRed:.07f green:.07f blue:.07f alpha:1];
-
-    self.view = rootView;
-    self.bridge = bridge;
 
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    
     
     if (![self isHeadsetPluggedIn] && ![self isLoudSpeaker]) {
         NSError* error;
@@ -127,7 +187,307 @@ RCT_EXPORT_METHOD(dismiss) {
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didSessionRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(bridgeDidReload)
+                                                 name:RCTJavaScriptWillStartLoadingNotification
+                                               object:bridge];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(javaScriptDidLoad:)
+                                                 name:RCTJavaScriptDidLoadNotification
+                                               object:bridge];
+    
+
+    
+    
+    
+    self.hangUpButton = [[UIButton alloc] init];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup"] forState:UIControlStateNormal];
+    [self.hangUpButton setBackgroundImage:[UIImage imageNamed:@"Call_hangup_p"] forState:UIControlStateHighlighted];
+    [self.hangUpButton addTarget:self
+                          action:@selector(hangUp:)
+                forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.hangUpButton];
+    
+    [self.hangUpButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.view.mas_centerX);
+        make.size.mas_equalTo(CGSizeMake(kBtnWidth, kBtnHeight));
+        make.bottom.equalTo(self.view.mas_bottom).with.offset(-80);
+    }];
+    
+    
+    [self requestPermission];
+    
+    
+    [self enterRoom];
+    
 }
+
+- (void)bridgeDidReload {
+    NSLog(@"bridge did reload");
+}
+
+- (void)javaScriptDidLoad:(NSNotification *)notification {
+    NSLog(@"javascript did load");
+}
+
+
+
+-(void)hangUp:(id)sender {
+    NSLog(@"hangup...");
+    
+    for (Participant *p in self.participants) {
+        [p dispose];
+        [p.videoView removeFromSuperview];
+        p.videoView = nil;
+    }
+    
+    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+
+    [self.reactBridge invalidate];
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+
+}
+
+- (void)requestPermission {
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized) {
+        
+    } else if(authStatus == AVAuthorizationStatusDenied){
+        // denied
+    } else if(authStatus == AVAuthorizationStatusRestricted){
+        // restricted, normally won't happen
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+        // not determined?!
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+            } else {
+                NSLog(@"Not granted access to %@", AVMediaTypeVideo);
+            }
+        }];
+    }
+    
+    AVAuthorizationStatus audioAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    if(audioAuthStatus == AVAuthorizationStatusAuthorized) {
+        
+    } else if(audioAuthStatus == AVAuthorizationStatusDenied){
+        // denied
+    } else if(audioAuthStatus == AVAuthorizationStatusRestricted){
+        // restricted, normally won't happen
+    } else if(audioAuthStatus == AVAuthorizationStatusNotDetermined){
+        [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+            if (granted) {
+            } else {
+                NSLog(@"Not granted access to %@", AVMediaTypeAudio);
+            }
+        }];
+    }
+}
+
+
+- (void)enterRoom {
+    NSDictionary *body = @{@"channelID":self.channelID,
+                           @"uid":@(self.currentUID),
+                           @"token":@"",
+                           };
+    RCTBridge *bridge = self.reactBridge;
+    [bridge.eventDispatcher sendAppEventWithName:@"enter_room" body:body];
+}
+
+- (void)leaveRoom {
+    NSDictionary *body = @{@"channelID":self.channelID};
+    RCTBridge *bridge = self.reactBridge;
+    [bridge.eventDispatcher sendAppEventWithName:@"leave_room" body:body];
+}
+
+-(void)sendRoomMessage:(NSDictionary*)msg {
+    NSDictionary *event = @{@"channelID":self.channelID, @"message":msg};
+    
+    RCTBridge *bridge = self.reactBridge;
+    [bridge.eventDispatcher sendAppEventWithName:@"send_room_message"
+                                            body:event];
+}
+
+
+-(Participant*)createLocalParticipant {
+    Participant *p = [[Participant alloc] init];
+    p.videoView = [[WebRTCVideoView alloc] initWithFrame:CGRectZero];
+    p.videoView.objectFit = WebRTCVideoViewObjectFitCover;
+    p.videoView.clipsToBounds = YES;
+    p.uid = self.currentUID;
+    p.local = YES;
+    
+    __weak GroupVOIPViewController *wself = self;
+    p.offerCB = ^(Participant *p, RTCSessionDescription *sdp) {
+        NSDictionary *msg = @{@"id":@"receiveVideoFrom", @"sender":@(p.uid), @"sdpOffer":sdp.sdp};
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [wself sendRoomMessage:msg];
+        });
+    };
+    
+    p.iceCB = ^(Participant *p, RTCIceCandidate *ice) {
+        NSDictionary *dict = [ice JSONDictionary2];
+        NSDictionary *msg = @{@"id":@"onIceCandidate", @"name":@(p.uid), @"candidate":dict};
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [wself sendRoomMessage:msg];
+        });
+    };
+    
+    [p createPeerConnection:self.factory];
+    return p;
+}
+
+
+-(Participant*)createRemoteParticipant:(int64_t)peer {
+    Participant *p = [[Participant alloc] init];
+    p.local = NO;
+    p.videoView = [[WebRTCVideoView alloc] initWithFrame:CGRectZero];
+    p.videoView.objectFit = WebRTCVideoViewObjectFitCover;
+    p.videoView.clipsToBounds = YES;
+    p.uid = peer;
+    __weak GroupVOIPViewController *wself = self;
+    p.offerCB = ^(Participant *p, RTCSessionDescription *sdp) {
+        NSDictionary *msg = @{@"id":@"receiveVideoFrom", @"sender":@(p.uid), @"sdpOffer":sdp.sdp};
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [wself sendRoomMessage:msg];
+        });
+    };
+    
+    p.iceCB = ^(Participant *p, RTCIceCandidate *ice) {
+        NSDictionary *dict = [ice JSONDictionary2];
+        NSDictionary *msg = @{@"id":@"onIceCandidate", @"name":@(p.uid), @"candidate":dict};
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [wself sendRoomMessage:msg];
+        });
+    };
+    
+    [p createRemotePeerConnection:self.factory];
+    return p;
+}
+
+-(void)onExistingParticipants:(NSDictionary*)msg {
+    Participant *p = [self createLocalParticipant];
+    [self.participants addObject:p];
+
+    CGFloat x = 0;
+    p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
+    [self.view addSubview:p.videoView];
+    
+    NSArray *data = [msg objectForKey:@"data"];
+    
+    for (NSString *pid in data) {
+        p = [self createRemoteParticipant:[pid longLongValue]];
+        [self.participants addObject:p];
+        x += 80;
+        p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
+        
+        [self.view addSubview:p.videoView];
+    }
+}
+
+-(void)onReceiveVideoAnswer:(NSDictionary*)msg {
+    int64_t uid = [[msg objectForKey:@"name"] longLongValue];
+    
+    NSUInteger index = [self.participants indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        Participant *p = (Participant*)obj;
+        if (p.uid == uid) {
+            *stop = YES;
+        }
+        return p.uid == uid;
+    }];
+    
+    if (index == NSNotFound) {
+        return;
+    }
+    
+    Participant *p = [self.participants objectAtIndex:index];
+    NSString *sdp = [msg objectForKey:@"sdpAnswer"];
+    RTCSessionDescription *description = [[RTCSessionDescription alloc] initWithType:RTCSdpTypeAnswer sdp:sdp];
+    [p.peerConnection setRemoteDescription:description
+                         completionHandler:^(NSError *error) {
+                             if (error) {
+                                 NSLog(@"set remote description error:%@", error);
+                                 return;
+                             }
+                             NSLog(@"set remote description success");
+                         }];
+}
+
+-(void)onNewParticipantArrived:(NSDictionary*)msg {
+    int64_t pid = [[msg objectForKey:@"name"] longLongValue];
+    
+    NSUInteger index = [self.participants indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        Participant *p = (Participant*)obj;
+        if (p.uid == pid) {
+            *stop = YES;
+        }
+        return p.uid == pid;
+    }];
+    
+    if (index != NSNotFound) {
+        return;
+    }
+    
+    Participant *p = [self createRemoteParticipant:pid];
+    [self.participants addObject:p];
+    
+    CGFloat x= (self.participants.count - 1)*80;
+    p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
+    [self.view addSubview:p.videoView];
+}
+
+-(void)onParticipantLeft:(NSDictionary*)msg {
+    int64_t pid = [[msg objectForKey:@"name"] longLongValue];
+    
+    NSUInteger index = [self.participants indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        Participant *p = (Participant*)obj;
+        if (p.uid == pid) {
+            *stop = YES;
+        }
+        return p.uid == pid;
+    }];
+    
+    if (index == NSNotFound) {
+        return;
+    }
+    
+    Participant *p = [self.participants objectAtIndex:index];
+    [p dispose];
+    [self.participants removeObjectAtIndex:index];
+    [p.videoView removeFromSuperview];
+    p.videoView = nil;
+    
+    CGFloat x = 0;
+    for (Participant *p in self.participants) {
+        p.videoView.frame = CGRectMake(x, 60, kVideoViewWidth, kVideoViewHeight);
+        x += 80;
+    }
+}
+
+
+-(void)onIceCandidate:(NSDictionary*)msg {
+    int64_t uid = [[msg objectForKey:@"name"] longLongValue];
+    
+    NSUInteger index = [self.participants indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        Participant *p = (Participant*)obj;
+        if (p.uid == uid) {
+            *stop = YES;
+        }
+        return p.uid == uid;
+    }];
+    
+    if (index == NSNotFound) {
+        return;
+    }
+    Participant *p = [self.participants objectAtIndex:index];
+    RTCIceCandidate *ice = [RTCIceCandidate candidateFromJSONDictionary2:[msg objectForKey:@"candidate"]];
+    NSLog(@"pc signalingState:%zd %d", p.peerConnection.signalingState, p.peerConnection.remoteDescription != nil);
+    [p.peerConnection addIceCandidate:ice];
+}
+
 
 
 -(int)setLoudspeakerStatus:(BOOL)enable {
@@ -160,10 +520,5 @@ RCT_EXPORT_METHOD(dismiss) {
 }
 
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 @end
