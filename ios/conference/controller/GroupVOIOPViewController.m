@@ -74,12 +74,14 @@ static int64_t g_controllerCount = 0;
 RCT_EXPORT_MODULE();
 
 
-RCT_EXPORT_METHOD(dismiss) {
-    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-    
-    RCTRootView *rootView = (RCTRootView*)self.view;
-    [rootView.bridge invalidate];
-    [self dismissViewControllerAnimated:YES completion:nil];
+RCT_EXPORT_METHOD(onClose:(NSString*)channelID) {
+    NSLog(@"on room closed");
+    for (Participant *p in self.participants) {
+        [p dispose];
+        [p.videoView removeFromSuperview];
+        p.videoView = nil;
+    }
+    [self.participants removeAllObjects];
 }
 
 
@@ -201,11 +203,6 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
                                                  name:RCTJavaScriptDidLoadNotification
                                                object:bridge];
     
-
-    
-    
-
-    
     UIScrollView *scrollView = [[UIScrollView alloc] init];
     self.scrollView = scrollView;
     [self.view addSubview:self.scrollView];
@@ -215,9 +212,6 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
         make.width.equalTo(self.view.mas_width);
         make.top.equalTo(self.view.mas_top).with.offset(60);
     }];
-    
-
-    
     
     UIButton *hangUpButton = [[UIButton alloc] init];
     self.hangUpButton = hangUpButton;

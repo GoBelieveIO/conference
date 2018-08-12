@@ -61,6 +61,8 @@ class Room {
             self.connectFailCount += 1;
             var now = new Date().getTime()
             self.closeTimestamp = Math.floor(now/1000);
+            ConferenceModule.onClose(self.room);
+            //在ping的timer中会自动重连
         }
         
         this.ws.onerror = function() {
