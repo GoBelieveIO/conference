@@ -5,17 +5,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
@@ -143,7 +148,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
                         p.dispose();
                     }
                     participants.clear();
-                    LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout1);
+                    RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
                     ll.removeAllViews();
                 }
             });
@@ -197,6 +202,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         activityCount++;
 
+
         Intent intent = getIntent();
 
         currentUID = intent.getLongExtra("current_uid", 0);
@@ -241,6 +247,8 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
     @Override
     public void invokeDefaultOnBackPressed() {
+        hangup();
+
         super.onBackPressed();
     }
 
@@ -297,13 +305,20 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         return super.onKeyUp(keyCode, event);
     }
 
+
     public void hangup(View v) {
+        hangup();
+        finish();
+    }
+
+    void hangup() {
         this.leaveRoom();
 
         for (int i = 0; i < participants.size(); i++) {
             Participant p = participants.get(i);
             p.dispose();
         }
+        participants.clear();
 
         executor.execute(new Runnable() {
             @Override
@@ -321,27 +336,51 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
                 }
             }
         });
-        finish();
     }
 
     void createTestParticipant() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int w = size.x/2;
+        int h = w;
+        int x = w*(participants.size()%2);
+        int y = h*(participants.size()/2);
+
         SurfaceViewRenderer render = new org.webrtc.SurfaceViewRenderer(this);
         render.init(rootEglBase.getEglBaseContext(), null);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout1);
-        render.setLayoutParams(new LinearLayout.LayoutParams(240,240));
+
+        RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
+        lp.leftMargin = x;
+        lp.topMargin = y;
+        render.setLayoutParams(lp);
+        render.setBackgroundColor(Color.RED);
         ll.addView(render);
-        
-        Participant p = new Participant(this.currentUID, this.channelID, "test", factory, render, this, executor);
+
+
+        Participant p = new Participant(-1, this.channelID, "test", factory, render, this, executor);
         this.participants.add(p);
     }
 
-
-
     void createLocalParticipant() {
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int w = size.x/2;
+        int h = w;
+        int x = w*(participants.size()%2);
+        int y = h*(participants.size()/2);
+
         SurfaceViewRenderer render = new org.webrtc.SurfaceViewRenderer(this);
         render.init(rootEglBase.getEglBaseContext(), null);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout1);
-        render.setLayoutParams(new LinearLayout.LayoutParams(240,240));
+
+        RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
+        lp.leftMargin = x;
+        lp.topMargin = y;
+        render.setLayoutParams(lp);
         ll.addView(render);
 
         VideoCapturer capturer = createVideoCapturer();
@@ -350,14 +389,28 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         p.createPeerConnection(rootEglBase.getEglBaseContext(), capturer);
 
         this.participants.add(p);
+
     }
 
     void createRemoteParticipant(long pid) {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int w = size.x/2;
+        int h = w;
+        int x = w*(participants.size()%2);
+        int y = h*(participants.size()/2);
+
         SurfaceViewRenderer render = new org.webrtc.SurfaceViewRenderer(this);
         render.init(rootEglBase.getEglBaseContext(), null);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout1);
-        render.setLayoutParams(new LinearLayout.LayoutParams(240,240));
+
+        RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
+        lp.leftMargin = x;
+        lp.topMargin = y;
+        render.setLayoutParams(lp);
         ll.addView(render);
+
 
         Participant p = new Participant(pid, this.channelID, "test", factory, render, this, executor);
         p.createRemotePeerConnection(rootEglBase.getEglBaseContext());
@@ -370,12 +423,17 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             Log.e(TAG, "participants not empty");
             return;
         }
+
         createLocalParticipant();
 
         ReadableArray data = map.getArray("data");
         for (int i = 0; i < data.size(); i++) {
             long pid = Long.parseLong(data.getString(i));
             createRemoteParticipant(pid);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            createTestParticipant();
         }
     }
 
@@ -397,6 +455,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         String sdp = map.getString("sdpAnswer");
         SessionDescription description = new SessionDescription(SessionDescription.Type.ANSWER, sdp);
+
 
         Participant p = participants.get(index);
         p.setRemoteDescription(description);
@@ -438,8 +497,25 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         Participant p = participants.get(index);
         p.dispose();
         participants.remove(index);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout1);
+
+        RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
         ll.removeView(p.videoRender);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int w = size.x/2;
+        int h = w;
+
+        for (int i = index; i < participants.size(); i++) {
+            int x = w*(i%2);
+            int y = h*(i/2);
+
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
+            lp.leftMargin = x;
+            lp.topMargin = y;
+            p.videoRender.setLayoutParams(lp);
+        }
     }
 
     void onIceCandidate(ReadableMap map) {

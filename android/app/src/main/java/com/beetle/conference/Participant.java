@@ -389,6 +389,12 @@ public class Participant {
             videoSource.dispose();
             videoSource = null;
         }
+
+        if (videoRender != null) {
+            videoRender.release();
+            videoRender = null;
+        }
+
         Log.d(TAG, "Closing peer connection done.");
     }
 

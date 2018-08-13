@@ -9,25 +9,50 @@
     <ScrollView
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight=".50">
+        android:layout_height="match_parent"
+        android:layout_weight="50">
 
-        <LinearLayout
-            android:id="@+id/linearLayout1"
+        <!--<LinearLayout-->
+            <!--android:id="@+id/linearLayout1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical" >-->
+
+        <!--</LinearLayout>-->
+
+        <!--<FrameLayout-->
+            <!--android:id="@+id/frameLayout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+        <!--</FrameLayout>-->
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="wrap_content">
+        </RelativeLayout>
 
-        </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="挂断"
-        android:id="@+id/hangup"
-        android:onClick="hangup"
-        android:clickable="true" />
+
+    <RelativeLayout
+        android:id="@+id/control"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="50">
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="挂断"
+            android:id="@+id/hangup"
+            android:onClick="hangup"
+            android:clickable="true" />
+
+
+    </RelativeLayout>
+
 
 </LinearLayout>
