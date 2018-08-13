@@ -119,36 +119,6 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
 }
 
 
-//http://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example
-- (void)didSessionRouteChange:(NSNotification *)notification
-{
-    NSDictionary *interuptionDict = notification.userInfo;
-    NSInteger routeChangeReason = [[interuptionDict valueForKey:AVAudioSessionRouteChangeReasonKey] integerValue];
-    NSLog(@"route change:%zd", routeChangeReason);
-    if (![self isHeadsetPluggedIn] && ![self isLoudSpeaker]) {
-        NSError* error;
-        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
-    }
-}
-
-- (BOOL)isHeadsetPluggedIn {
-    AVAudioSessionRouteDescription *route = [[AVAudioSession sharedInstance] currentRoute];
-    
-    BOOL headphonesLocated = NO;
-    for( AVAudioSessionPortDescription *portDescription in route.outputs )
-    {
-        headphonesLocated |= ( [portDescription.portType isEqualToString:AVAudioSessionPortHeadphones] );
-    }
-    return headphonesLocated;
-}
-
-
--(BOOL)isLoudSpeaker {
-    AVAudioSession* session = [AVAudioSession sharedInstance];
-    AVAudioSessionCategoryOptions options = session.categoryOptions;
-    BOOL enabled = options & AVAudioSessionCategoryOptionDefaultToSpeaker;
-    return enabled;
-}
 
 
 -(void)dealloc {
@@ -648,5 +618,35 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
 }
 
 
+//http://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example
+- (void)didSessionRouteChange:(NSNotification *)notification
+{
+    NSDictionary *interuptionDict = notification.userInfo;
+    NSInteger routeChangeReason = [[interuptionDict valueForKey:AVAudioSessionRouteChangeReasonKey] integerValue];
+    NSLog(@"route change:%zd", routeChangeReason);
+    if (![self isHeadsetPluggedIn] && ![self isLoudSpeaker]) {
+        NSError* error;
+        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
+    }
+}
+
+- (BOOL)isHeadsetPluggedIn {
+    AVAudioSessionRouteDescription *route = [[AVAudioSession sharedInstance] currentRoute];
+    
+    BOOL headphonesLocated = NO;
+    for( AVAudioSessionPortDescription *portDescription in route.outputs )
+    {
+        headphonesLocated |= ( [portDescription.portType isEqualToString:AVAudioSessionPortHeadphones] );
+    }
+    return headphonesLocated;
+}
+
+
+-(BOOL)isLoudSpeaker {
+    AVAudioSession* session = [AVAudioSession sharedInstance];
+    AVAudioSessionCategoryOptions options = session.categoryOptions;
+    BOOL enabled = options & AVAudioSessionCategoryOptionDefaultToSpeaker;
+    return enabled;
+}
 
 @end
