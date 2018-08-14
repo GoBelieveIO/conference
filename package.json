@@ -20,7 +20,7 @@
     "merge": "^1.2.0",
     "react": "15.4.2",
     "react-dom": "15.4.2",
-    "react-native": "0.42.3",
+    "react-native": "0.55.4",
     "react-native-background-timer": "1.0.0",
     "react-native-loading-spinner-overlay": "^0.4.1",
     "react-native-navbar": "^1.5.4",
@@ -28,7 +28,7 @@
     "react-native-sound": "github:richmonkey/react-native-sound",
     "react-native-toast": "^1.0.1",
     "react-native-vector-icons": "4.0.1",
-    "react-native-webrtc": "^1.58.1",
+    "react-native-webrtc": "^1.58.3",
     "sdp-translator": "^0.1.15",
     "ua-parser-js": "^0.7.7",
     "uuid": "~2.0.1"

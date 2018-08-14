@@ -1,13 +1,19 @@
 package com.beetle.conference;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.media.AudioManager;
+import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Bundle;
@@ -15,6 +21,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,7 +29,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Arguments;
@@ -44,12 +53,6 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.uimanager.ViewManager;
-import com.joshblour.reactnativepermissions.ReactNativePermissionsPackage;
-import com.oney.WebRTCModule.EglUtils;
-import com.oney.WebRTCModule.WebRTCModulePackage;
-import com.remobile.toast.RCTToastPackage;
-import com.zmxv.RNSound.RNSoundPackage;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.webrtc.Camera1Enumerator;
@@ -62,6 +65,9 @@ import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
+import org.webrtc.VideoRenderer;
+import org.webrtc.VideoSource;
+import org.webrtc.VideoTrack;
 import org.webrtc.voiceengine.WebRtcAudioManager;
 import org.webrtc.voiceengine.WebRtcAudioUtils;
 
@@ -74,14 +80,19 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBtnHandler, Participant.ParticipantObserver, ReactInstanceManager.ReactInstanceEventListener {
-    private final String TAG = "face";
 
+
+public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBtnHandler, Participant.ParticipantObserver, ReactInstanceManager.ReactInstanceEventListener {
+    private static final String TAG = "face";
+    private static final int PERMISSIONS_REQUEST = 3;
 
     public static long activityCount = 0;
     PeerConnectionFactory factory;
     private EglBase rootEglBase;
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+
+
+    private  ScheduledExecutorService executor;
     ArrayList<Participant> participants = new ArrayList<>();
 
     private ReactInstanceManager mReactInstanceManager;
@@ -91,6 +102,10 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
     private String channelID;
 
     private Handler mainHandler;
+
+
+    ReactNativeHost host;
+
     public class GroupVOIPModule extends ReactContextBaseJavaModule {
         public GroupVOIPModule(ReactApplicationContext reactContext) {
             super(reactContext);
@@ -140,6 +155,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         @ReactMethod
         public void onClose(final String channelID) {
             Log.i(TAG, "on room closed");
+
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
                 public void run() {
@@ -156,13 +172,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
     }
 
-    class ConferencePackage implements ReactPackage {
-
-        @Override
-        public List<Class<? extends JavaScriptModule>> createJSModules() {
-            return Collections.emptyList();
-        }
-
+    private  class ConferencePackage implements ReactPackage {
         @Override
         public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
             return Collections.emptyList();
@@ -179,7 +189,25 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         }
     }
 
+    private  class ReactNativeHostImpl extends ReactNativeHost {
 
+        public ReactNativeHostImpl(Application app) {
+            super(app);
+        }
+
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+            List<ReactPackage> list = new ArrayList<>();
+                list.add(new MainReactPackage());
+                list.add(new ConferencePackage());
+            return list;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,9 +239,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             finish();
             return;
         }
-
-
-
         channelID = intent.getStringExtra("channel_id");
         if (TextUtils.isEmpty(channelID)) {
             Log.i(TAG, "channel id is empty");
@@ -222,33 +247,58 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         }
         Log.i(TAG, "channel id:" + channelID);
 
+        executor = Executors.newSingleThreadScheduledExecutor();
+        rootEglBase = EglBase.create();
+
         headsetReceiver = new MusicIntentReceiver();
         mainHandler = new Handler(getMainLooper());
 
-        mReactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getApplication())
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
-                .addPackage(new ConferencePackage())
-                .addPackage(new WebRTCModulePackage())
-                .addPackage(new ReactNativePermissionsPackage())
-                .addPackage(new RCTToastPackage())
-                .addPackage(new RNSoundPackage())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
-
+        host = new ReactNativeHostImpl(getApplication());
+        mReactInstanceManager = host.getReactInstanceManager();
         mReactInstanceManager.createReactContextInBackground();
         mReactInstanceManager.addReactInstanceEventListener(this);
 
-        createPeerConnectionFactory(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int cameraPermission = (checkSelfPermission(Manifest.permission.CAMERA));
+            int recordPermission = (checkSelfPermission(Manifest.permission.RECORD_AUDIO));
+
+            if (cameraPermission == PackageManager.PERMISSION_GRANTED &&
+                    recordPermission == PackageManager.PERMISSION_GRANTED) {
+                createPeerConnectionFactory(this);
+            } else {
+                requestPermission();
+            }
+        }
     }
 
     @Override
-    public void invokeDefaultOnBackPressed() {
-        hangup();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST && permissions != null && grantResults != null) {
+            for (int i = 0; i < permissions.length && i < grantResults.length; i++) {
+                Log.i(TAG, "granted permission:" + permissions[i] + " " + grantResults[i]);
+            }
+        }
 
+        if (requestCode == PERMISSIONS_REQUEST) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int cameraPermission = (checkSelfPermission(Manifest.permission.CAMERA));
+                int recordPermission = (checkSelfPermission(Manifest.permission.RECORD_AUDIO));
+
+                if (cameraPermission == PackageManager.PERMISSION_GRANTED &&
+                        recordPermission == PackageManager.PERMISSION_GRANTED) {
+                    createPeerConnectionFactory(this);
+                }
+            }
+        }
+
+    }
+
+
+    @Override
+    public void invokeDefaultOnBackPressed() {
+        Log.i(TAG, "invokeDefaultOnBackPressed...");
+        hangup();
         super.onBackPressed();
     }
 
@@ -305,15 +355,37 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         return super.onKeyUp(keyCode, event);
     }
 
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int cameraPermission = (checkSelfPermission(Manifest.permission.CAMERA));
+            int recordPermission = (checkSelfPermission(Manifest.permission.RECORD_AUDIO));
+
+            ArrayList<String> permissions = new ArrayList<String>();
+            if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (recordPermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
+
+            if (permissions.size() > 0) {
+                String[] array = new String[permissions.size()];
+                permissions.toArray(array);
+                this.requestPermissions(array, PERMISSIONS_REQUEST);
+            }
+
+        }
+    }
+
 
     public void hangup(View v) {
+        Log.i(TAG, "hangup...");
         hangup();
         finish();
     }
 
     void hangup() {
         this.leaveRoom();
-
         for (int i = 0; i < participants.size(); i++) {
             Participant p = participants.get(i);
             p.dispose();
@@ -328,8 +400,11 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
                         factory.dispose();
                         factory = null;
                     }
-                    PeerConnectionFactory.stopInternalTracingCapture();
-                    PeerConnectionFactory.shutdownInternalTracer();
+
+                    if (rootEglBase != null) {
+                        rootEglBase.release();
+                        rootEglBase = null;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw e;
@@ -375,6 +450,8 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         SurfaceViewRenderer render = new org.webrtc.SurfaceViewRenderer(this);
         render.init(rootEglBase.getEglBaseContext(), null);
+        render.setZOrderMediaOverlay(true);
+        render.getHolder().setFormat(PixelFormat.TRANSPARENT);
 
         RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(w, h);
@@ -384,6 +461,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         ll.addView(render);
 
         VideoCapturer capturer = createVideoCapturer();
+
         Participant p = new Participant(this.currentUID, this.channelID, "test", factory, render, this, executor);
 
         p.createPeerConnection(rootEglBase.getEglBaseContext(), capturer);
@@ -432,9 +510,9 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             createRemoteParticipant(pid);
         }
 
-        for (int i = 0; i < 10; i++) {
-            createTestParticipant();
-        }
+//        for (int i = 0; i < 10; i++) {
+//            createTestParticipant();
+//        }
     }
 
     void onReceiveVideoAnswer(ReadableMap map) {
@@ -679,22 +757,22 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             this.enableLevelControl = enableLevelControl;
         }
     }
-
     private void createPeerConnectionFactory(Context context) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                createPeerConnectionFactoryInternal(context);
+            }
+        });
+    }
+    private void createPeerConnectionFactoryInternal(Context context) {
 
         PeerConnectionParameters peerConnectionParameters = new PeerConnectionParameters(true, false, false,
                 0, 0, 0, 0, null, true, 0,
                 null, false, false, false, false, false,
                 false, false);
 
-        PeerConnectionFactory.initializeInternalTracer();
-        if (peerConnectionParameters.tracing) {
-            PeerConnectionFactory.startInternalTracingCapture(
-                    Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
-                            + "webrtc-trace.txt");
-        }
-        Log.d(TAG,
-                "Create peer connection factory. Use video: " + peerConnectionParameters.videoCallEnabled);
+        Log.d(TAG,"Create peer connection factory.");
 
         // Enable/disable OpenSL ES playback.
         if (!peerConnectionParameters.useOpenSLES) {
@@ -729,31 +807,28 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             WebRtcAudioUtils.setWebRtcBasedNoiseSuppressor(false);
         }
 
-        // Create peer connection factory.
-        if (!PeerConnectionFactory.initializeAndroidGlobals(
-                context, true, true, peerConnectionParameters.videoCodecHwAcceleration)) {
-            Log.i(TAG, "Failed to initializeAndroidGlobals");
-        }
+        PeerConnectionFactory.InitializationOptions.Builder builder = PeerConnectionFactory.InitializationOptions.builder(context.getApplicationContext());
+        builder.setEnableVideoHwAcceleration(peerConnectionParameters.videoCodecHwAcceleration);
+        PeerConnectionFactory.InitializationOptions initOptions = builder.createInitializationOptions();
+        PeerConnectionFactory.initialize(initOptions);
 
-        rootEglBase = EglBase.create();
         factory = new PeerConnectionFactory(null);
         EglBase.Context eglContext = rootEglBase.getEglBaseContext();
         if (eglContext != null) {
             factory.setVideoHwAccelerationOptions(eglContext, eglContext);
         }
 
-        // Set default WebRTC tracing and INFO libjingle logging.
-        // NOTE: this _must_ happen while |factory| is alive!
-//        Logging.enableTracing("logcat:", EnumSet.of(Logging.TraceLevel.TRACE_DEFAULT));
-//        Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO);
-
         Log.d(TAG, "Peer connection factory created.");
+    }
+
+
+    private boolean useCamera2() {
+        return Camera2Enumerator.isSupported(this);
     }
 
     private VideoCapturer createVideoCapturer() {
         VideoCapturer videoCapturer = null;
-        boolean useCamera2 = true;
-        if (useCamera2) {
+        if (useCamera2()) {
             Log.d(TAG, "Creating capturer using camera2 API.");
             videoCapturer = createCameraCapturer(new Camera2Enumerator(this));
         } else {
@@ -798,7 +873,5 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         return null;
     }
-
-
 
 }

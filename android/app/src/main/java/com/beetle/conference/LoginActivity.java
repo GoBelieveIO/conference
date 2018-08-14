@@ -28,8 +28,6 @@ public class LoginActivity extends FragmentActivity {
     }
 
 
-
-
     public void enterRoom(View v) {
         EditText uidEditText = (EditText)findViewById(R.id.et_username);
         EditText conferenceEditText = (EditText)findViewById(R.id.conference_id);
