@@ -75,13 +75,13 @@ public class Participant {
 
     private PeerConnection peerConnection;
 
-    private VideoCapturer videoCapturer;
+    protected VideoCapturer videoCapturer;
 
     private AudioSource audioSource;
     private VideoSource videoSource;
 
-    private VideoTrack videoTrack;
-    private AudioTrack audioTrack;
+    protected VideoTrack videoTrack;
+    protected AudioTrack audioTrack;
     private MediaStream mediaStream;
 
     private SessionDescription localSdp; // offer SDP
@@ -215,6 +215,17 @@ public class Participant {
         });
     }
 
+    public void toogleVideo() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (videoTrack != null) {
+                    boolean isEnabled = videoTrack.enabled();
+                    videoTrack.setEnabled(!isEnabled);
+                }
+            }
+        });
+    }
 
     private void createSendOnlyMediaConstraintsInternal() {
 

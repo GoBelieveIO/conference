@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -58,6 +59,7 @@ import org.json.JSONObject;
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
 import org.webrtc.CameraEnumerator;
+import org.webrtc.CameraVideoCapturer;
 import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.Logging;
@@ -377,6 +379,67 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         }
     }
 
+    public void mute(View v) {
+        Log.i(TAG, "toogle audio");
+
+        if (participants.size() == 0) {
+            return;
+        }
+        Participant p = participants.get(0);
+        if (p.getUid() != this.currentUID) {
+            return;
+        }
+
+        boolean isEnabled= !p.audioTrack.enabled();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                p.audioTrack.setEnabled(isEnabled);
+            }
+        });
+        ImageButton muteButton = (ImageButton)findViewById(R.id.mute);
+        if (isEnabled) {
+            muteButton.setBackgroundResource(R.drawable.unmute);
+        } else {
+            muteButton.setBackgroundResource(R.drawable.mute);
+        }
+    }
+
+    public void toogleCamera(View v) {
+        Log.i(TAG, "toogle camera");
+
+        if (participants.size() == 0) {
+            return;
+        }
+        Participant p = participants.get(0);
+        if (p.getUid() != this.currentUID) {
+            return;
+        }
+
+        p.toogleVideo();
+    }
+
+    public void switchCamera() {
+
+        Log.i(TAG, "switch camera");
+        if (participants.size() == 0) {
+            return;
+        }
+        Participant p = participants.get(0);
+        if (p.getUid() != this.currentUID) {
+            return;
+        }
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!p.videoTrack.enabled()) {
+                    return;
+                }
+                CameraVideoCapturer cameraVideoCapturer = (CameraVideoCapturer) p.videoCapturer;
+                cameraVideoCapturer.switchCamera(null);
+            }
+        });
+    }
 
     public void hangup(View v) {
         Log.i(TAG, "hangup...");
@@ -459,6 +522,16 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         lp.topMargin = y;
         render.setLayoutParams(lp);
         ll.addView(render);
+
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GroupVOIPActivity.this.switchCamera();
+            }
+        };
+
+        render.setOnClickListener(listener);
 
         VideoCapturer capturer = createVideoCapturer();
 

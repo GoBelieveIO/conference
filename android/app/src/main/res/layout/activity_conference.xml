@@ -41,15 +41,36 @@
         android:layout_height="match_parent"
         android:layout_weight="50">
 
+        <ImageButton
+            android:id="@+id/mute"
+            android:onClick="mute"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="48dp"
+            android:background="@drawable/unmute" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <ImageButton
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_centerInParent="true"
-            android:text="挂断"
+            android:background="@drawable/call_hangup_x"
             android:id="@+id/hangup"
             android:onClick="hangup"
             android:clickable="true" />
+
+
+        <ImageButton
+            android:id="@+id/camera"
+            android:onClick="toogleCamera"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="48dp"
+            android:background="@drawable/camera" />
 
 
     </RelativeLayout>

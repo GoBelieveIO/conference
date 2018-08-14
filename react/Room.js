@@ -5,7 +5,11 @@ import {
     Platform,    
     NativeModules,
     NativeAppEventEmitter,
+    BackHandler,    
 } from 'react-native';
+
+//强制执行BackHandler全局代码,原生的invokeDefaultOnBackPressed才会生效
+BackHandler.addEventListener
 
 var ConferenceModule = (Platform.OS == 'android') ?
              NativeModules.GroupVOIPActivity :
@@ -27,6 +31,8 @@ class Room {
         this.duration = 0;
         this.connectFailCount = 0;
         this.closeTimestamp = 0;
+
+
     }
 
 
