@@ -119,18 +119,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         }
 
         @ReactMethod
-        public void dismiss() {
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    GroupVOIPActivity.this.finish();
-                }
-            };
-            mainHandler.post(r);
-        }
-
-
-        @ReactMethod
         public void onMessage(final ReadableMap map, final String channelID) {
             Log.i(TAG, "on message:" + map + " channel id:" + channelID);
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
@@ -259,6 +247,10 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         mReactInstanceManager = host.getReactInstanceManager();
         mReactInstanceManager.createReactContextInBackground();
         mReactInstanceManager.addReactInstanceEventListener(this);
+
+        AudioManager am = (AudioManager)getSystemService(AUDIO_SERVICE);
+        am.setSpeakerphoneOn(true);
+        am.setMode(AudioManager.MODE_IN_COMMUNICATION);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int cameraPermission = (checkSelfPermission(Manifest.permission.CAMERA));
@@ -759,6 +751,9 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
     @Override
     public void onReactContextInitialized(ReactContext context) {
         Log.i(TAG, "on react context initialized");
+
+
+
         this.enterRoom();
     }
 

@@ -504,7 +504,7 @@ public class Participant {
 
         @Override
         public void onAddStream(final MediaStream stream) {
-            Log.i(TAG, "on add stream");
+            Log.i(TAG, "on add stream audio tracks:" + stream.audioTracks.size() + " video tracks:" + stream.videoTracks.size());
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -515,6 +515,11 @@ public class Participant {
                         reportError("Weird-looking stream: " + stream);
                         return;
                     }
+
+                    if (stream.audioTracks.size() == 1) {
+                        audioTrack = stream.audioTracks.get(0);
+                    }
+
                     if (stream.videoTracks.size() == 1) {
                         videoTrack = stream.videoTracks.get(0);
                         videoTrack.addRenderer(new VideoRenderer(videoRender));
