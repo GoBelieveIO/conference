@@ -1,9 +1,6 @@
 import { AppRegistry } from 'react-native';
-//import GroupCall from './GroupCall.js';
 import Room from './Room.js';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
-
-//AppRegistry.registerComponent('GroupCall', () => GroupCall);
 
 var app = {
     room:undefined,
