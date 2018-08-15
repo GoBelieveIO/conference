@@ -12,3 +12,4 @@ android/imsdk/build/
 .gradle
 *.iml
 .DS_Store
+yarn.lock

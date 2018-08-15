@@ -11,8 +11,8 @@ android {
         applicationId "com.beetle.conference"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 16
-        versionName "1.6"
+        versionCode 10
+        versionName "1.0"
 
         ndk {
             abiFilters 'armeabi-v7a', 'x86'
@@ -50,14 +50,10 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-background-timer')
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     compile 'com.facebook.react:react-native:+'
-
-    compile project(':react-native-permissions')
     compile project(':react-native-webrtc')
-    compile project(':react-native-toast')
-    compile project(':react-native-sound')
+
 }
 

@@ -1,6 +1,7 @@
 package com.beetle.conference;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,24 +16,20 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactRootView;
-import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.common.LifecycleState;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.uimanager.ViewManager;
-import com.joshblour.reactnativepermissions.ReactNativePermissionsPackage;
 import com.oney.WebRTCModule.WebRTCModulePackage;
-import com.remobile.toast.RCTToastPackage;
-import com.zmxv.RNSound.RNSoundPackage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +49,9 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
     private String channelID;
 
     private Handler mainHandler;
+
+    ReactNativeHost host;
+
     public class GroupVOIPModule extends ReactContextBaseJavaModule {
         public GroupVOIPModule(ReactApplicationContext reactContext) {
             super(reactContext);
@@ -80,10 +80,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
     class ConferencePackage implements ReactPackage {
 
-        @Override
-        public List<Class<? extends JavaScriptModule>> createJSModules() {
-            return Collections.emptyList();
-        }
 
         @Override
         public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
@@ -101,7 +97,26 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         }
     }
 
+    private  class ReactNativeHostImpl extends ReactNativeHost {
 
+        public ReactNativeHostImpl(Application app) {
+            super(app);
+        }
+
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+            List<ReactPackage> list = new ArrayList<>();
+            list.add(new MainReactPackage());
+            list.add(new ConferencePackage());
+            list.add(new WebRTCModulePackage());
+            return list;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,19 +156,8 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         mReactRootView = new ReactRootView(this);
 
-        mReactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getApplication())
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
-                .addPackage(new ConferencePackage())
-                .addPackage(new WebRTCModulePackage())
-                .addPackage(new ReactNativePermissionsPackage())
-                .addPackage(new RCTToastPackage())
-                .addPackage(new RNSoundPackage())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
+        host = new ReactNativeHostImpl(getApplication());
+        mReactInstanceManager = host.getReactInstanceManager();
 
         Bundle props = new Bundle();
         props.putString("room", channelID);
@@ -166,7 +170,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         headsetReceiver = new MusicIntentReceiver();
         mainHandler = new Handler(getMainLooper());
-
     }
 
     @Override

@@ -126,9 +126,8 @@ class GroupCall extends Component {
         
     }
 
-    
     requestPermission(permission) {
-        return Permissions.getPermissionStatus(permission)
+        return Permissions.check(permission)
                           .then(response => {
                               console.log("permission:" + permission + " " + response);
                               if (response == 'authorized') {
@@ -140,7 +139,7 @@ class GroupCall extends Component {
                                   throw response;
                               }
                           })
-                          .then(() => Permissions.requestPermission(permission))
+                          .then(() => Permissions.request(permission))
                           .then((response) => {
                               console.log("permission:" + permission + " " + response);
                               if (response == 'authorized') {
@@ -151,6 +150,9 @@ class GroupCall extends Component {
                                          response == 'restricted') {
                                   throw response;
                               }                               
+                          })
+                          .catch((err) => {
+                              console.log("request permission:", permission, " err:", err);
                           });        
     }
 

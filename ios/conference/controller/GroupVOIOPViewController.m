@@ -87,7 +87,7 @@ RCT_EXPORT_METHOD(dismiss) {
     g_controllerCount++;
     
     __weak GroupVOIPViewController *wself = self;
-    RCTBridgeModuleProviderBlock provider = ^NSArray<id<RCTBridgeModule>> *{
+    RCTBridgeModuleListProvider provider = ^NSArray<id<RCTBridgeModule>> *{
         return @[wself];
     };
     
