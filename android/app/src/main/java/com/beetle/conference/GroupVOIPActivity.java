@@ -21,23 +21,15 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Dynamic;
-import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -45,43 +37,29 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.facebook.react.bridge.ReadableType;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.common.LifecycleState;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.uimanager.ViewManager;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
 import org.webrtc.CameraEnumerator;
 import org.webrtc.CameraVideoCapturer;
 import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
-import org.webrtc.Logging;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
-import org.webrtc.VideoRenderer;
-import org.webrtc.VideoSource;
-import org.webrtc.VideoTrack;
 import org.webrtc.voiceengine.WebRtcAudioManager;
 import org.webrtc.voiceengine.WebRtcAudioUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
 
 
 public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBtnHandler, Participant.ParticipantObserver, ReactInstanceManager.ReactInstanceEventListener {
@@ -102,8 +80,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
     private long currentUID;
     private String channelID;
-
-    private Handler mainHandler;
+    private String token;
 
 
     ReactNativeHost host;
@@ -237,11 +214,18 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         }
         Log.i(TAG, "channel id:" + channelID);
 
+        token = intent.getStringExtra("token");
+        if (TextUtils.isEmpty(token)) {
+            Log.i(TAG, "token is empty");
+            finish();
+            return;
+        }
+
         executor = Executors.newSingleThreadScheduledExecutor();
         rootEglBase = EglBase.create();
 
         headsetReceiver = new MusicIntentReceiver();
-        mainHandler = new Handler(getMainLooper());
+
 
         host = new ReactNativeHostImpl(getApplication());
         mReactInstanceManager = host.getReactInstanceManager();
@@ -692,7 +676,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         map.putString("channelID", this.channelID);
         map.putDouble("uid", this.currentUID);
-        map.putString("token", "");
+        map.putString("token", this.token);
 
         ReactContext reactContext = mReactInstanceManager.getCurrentReactContext();
         this.sendEvent(reactContext, "enter_room", map);
