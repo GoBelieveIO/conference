@@ -1,4 +1,4 @@
-rootProject.name = 'conference'
+rootProject.name = 'conference-native'
 
 include ':app'
 

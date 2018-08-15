@@ -1,6 +1,5 @@
 package com.beetle.conference;
 
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -88,22 +87,20 @@ public class LoginActivity extends FragmentActivity {
         }.execute();
     }
 
-    String login(long uid) {
+    private String login(long uid) {
+        //调用app自身的登陆接口获取im服务必须的access token
         String URL = "http://demo.gobelieve.io";
         String uri = String.format("%s/auth/token", URL);
 
         try {
-            URL url = new URL(uri);
+            java.net.URL url = new URL(uri);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setUseCaches(false);
             connection.setRequestProperty("Content-type", "application/json");
-
-
             connection.connect();
-
 
             JSONObject json = new JSONObject();
             json.put("uid", uid);
@@ -112,31 +109,32 @@ public class LoginActivity extends FragmentActivity {
             writer.close();
 
             int responseCode = connection.getResponseCode();
-            if(responseCode == HttpURLConnection.HTTP_OK){
-                InputStream inputStream = connection.getInputStream();
-
-                //inputstream -> string
-                ByteArrayOutputStream result = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) != -1) {
-                    result.write(buffer, 0, length);
-                }
-                String str = result.toString(StandardCharsets.UTF_8.name());
-
-
-                JSONObject jsonObject = new JSONObject(str);
-                String accessToken = jsonObject.getString("token");
-                return accessToken;
+            if(responseCode != HttpURLConnection.HTTP_OK) {
+                System.out.println("login failure code is:" + responseCode);
+                return null;
             }
 
+            InputStream inputStream = connection.getInputStream();
+
+            //inputstream -> string
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            String str = result.toString(StandardCharsets.UTF_8.name());
+
+
+            JSONObject jsonObject = new JSONObject(str);
+            String accessToken = jsonObject.getString("token");
+            return accessToken;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return "";
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

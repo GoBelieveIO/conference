@@ -226,12 +226,8 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
         make.bottom.equalTo(self.view.mas_bottom).with.offset(-95);
     }];
     
-    
     [self requestPermission];
-    
-    
     [self enterRoom];
-    
 }
 
 - (void)bridgeDidReload {
@@ -242,8 +238,6 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
     NSLog(@"javascript did load");
 }
 
-
-
 -(void)hangUp:(id)sender {
     NSLog(@"hangup...");
     
@@ -252,13 +246,10 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
         [p.videoView removeFromSuperview];
         p.videoView = nil;
     }
+    [self.reactBridge invalidate];
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-
-    [self.reactBridge invalidate];
-
     [self dismissViewControllerAnimated:YES completion:nil];
-
 }
 
 - (void)requestPermission {
@@ -300,8 +291,7 @@ RCT_EXPORT_METHOD(onMessage:(NSDictionary*)msg channelID:(NSString*)channelID) {
 - (void)enterRoom {
     NSDictionary *body = @{@"channelID":self.channelID,
                            @"uid":@(self.currentUID),
-                           @"token":@"",
-                           };
+                           @"token":self.token};
     RCTBridge *bridge = self.reactBridge;
     [bridge.eventDispatcher sendAppEventWithName:@"enter_room" body:body];
 }

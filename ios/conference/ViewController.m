@@ -85,9 +85,67 @@
         return;
     }
     
-    GroupVOIPViewController *controller = [[GroupVOIPViewController alloc] init];
-    controller.currentUID = myUID;
-    controller.channelID = conferenceID;
-    [self presentViewController:controller animated:YES completion:nil];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:NO];
+    hud.label.text = @"登录中...";
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *token = [self login:myUID];
+        NSLog(@"token:%@", token);
+        dispatch_async(dispatch_get_main_queue(), ^{
+           [hud hideAnimated:NO];
+            
+            if (token.length == 0) {
+                return;
+            }
+            
+            GroupVOIPViewController *controller = [[GroupVOIPViewController alloc] init];
+            controller.currentUID = myUID;
+            controller.channelID = conferenceID;
+            controller.token = token;
+            [self presentViewController:controller animated:YES completion:nil];
+        });
+    });
 }
+
+
+-(NSString*)login:(long long)uid {
+    //调用app自身的登陆接口获取voip服务必须的access token
+    //sandbox地址："http://sandbox.demo.gobelieve.io/auth/token"
+    NSString *url = @"http://demo.gobelieve.io/auth/token";
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
+                                                              cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                          timeoutInterval:60];
+    
+    
+    [urlRequest setHTTPMethod:@"POST"];
+    
+    NSDictionary *headers = [NSDictionary dictionaryWithObject:@"application/json" forKey:@"Content-Type"];
+    
+    [urlRequest setAllHTTPHeaderFields:headers];
+    
+    
+    NSDictionary *obj = [NSDictionary dictionaryWithObject:[NSNumber numberWithLongLong:uid] forKey:@"uid"];
+    NSData *postBody = [NSJSONSerialization dataWithJSONObject:obj options:0 error:nil];
+    
+    [urlRequest setHTTPBody:postBody];
+    
+    NSURLResponse *response = nil;
+    
+    NSError *error = nil;
+    
+    NSData *data = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response error:&error];
+    if (error != nil) {
+        NSLog(@"error:%@", error);
+        return nil;
+    }
+    NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*)response;
+    if (httpResp.statusCode != 200) {
+        return nil;
+    }
+    NSDictionary *e = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+    return [e objectForKey:@"token"];
+}
+
+
+
 @end
