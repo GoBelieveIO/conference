@@ -4,13 +4,13 @@ apply from: '../../node_modules/react-native/react.gradle'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '27.0.3'
     useLibrary  'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "com.beetle.conference"
         minSdkVersion 16
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 10
         versionName "1.0"
 
@@ -50,10 +50,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    compile 'com.facebook.react:react-native:+'
-    compile project(':react-native-webrtc')
+    implementation 'com.facebook.react:react-native:+'
+    implementation project(':react-native-webrtc')
 
 }
 
