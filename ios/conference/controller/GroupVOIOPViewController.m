@@ -104,7 +104,8 @@ RCT_EXPORT_METHOD(dismiss) {
 
     NSString *name = [NSString stringWithFormat:@"%lld",self.currentUID];
     NSDictionary *props = @{@"name":name,
-                            @"room":self.channelID};
+                            @"room":self.channelID,
+                            @"token":self.token};
 
     
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"GroupCall" initialProperties:props];

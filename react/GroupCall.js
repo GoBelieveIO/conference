@@ -63,10 +63,12 @@ class GroupCall extends Component {
         
         this.name = this.props.name;
         this.room = this.props.room;
+        this.token = this.props.token;
+        
         this.connectFailCount = 0;
         this.closeTimestamp = 0;
         
-        console.log("name:", this.name, " room:", this.room);
+        console.log("name:", this.name, " room:", this.room, " token:", this.token);
     }
 
 
@@ -374,6 +376,7 @@ class GroupCall extends Component {
 	    id : 'joinRoom',
 	    name : this.name,
 	    room : this.room,
+            token: this.token,
         }
         this.sendMessage(message);
     }

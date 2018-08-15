@@ -14,6 +14,6 @@
 
 @property(nonatomic, assign) int64_t currentUID;
 @property(nonatomic, copy) NSString *channelID;
-
+@property(nonatomic, copy) NSString *token;
 
 @end

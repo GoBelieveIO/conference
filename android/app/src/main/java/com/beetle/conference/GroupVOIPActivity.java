@@ -47,6 +47,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
     private long currentUID;
     private String channelID;
+    private String token;
 
     private Handler mainHandler;
 
@@ -143,8 +144,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             return;
         }
 
-
-
         channelID = intent.getStringExtra("channel_id");
         if (TextUtils.isEmpty(channelID)) {
             Log.i(TAG, "channel id is empty");
@@ -152,6 +151,13 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             return;
         }
         Log.i(TAG, "channel id:" + channelID);
+
+        token = intent.getStringExtra("token");
+        if (TextUtils.isEmpty(token)) {
+            Log.i(TAG, "token is empty");
+            finish();
+            return;
+        }
 
 
         mReactRootView = new ReactRootView(this);
@@ -162,6 +168,7 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
         Bundle props = new Bundle();
         props.putString("room", channelID);
         props.putString("name", ""+currentUID);
+        props.putString("token", token);
 
         mReactRootView.startReactApplication(mReactInstanceManager, "GroupCall", props);
         setContentView(mReactRootView);
