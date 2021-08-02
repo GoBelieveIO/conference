@@ -15,27 +15,17 @@
  */
 
 
-require('./polyfills-webrtc.js');
-require('./adapter.js');
+// require('./polyfills-webrtc.js');
+// require('./adapter.js');
 
 
 var freeice = require('freeice')
 var inherits = require('inherits')
-var UAParser = require('ua-parser-js')
 var uuid = require('uuid')
-var hark = require('hark')
 
 var EventEmitter = require('events').EventEmitter
 var sdpTranslator = require('sdp-translator')
 var logger = window.Logger || console
-
-// var gUM = navigator.mediaDevices.getUserMedia || function (constraints) {
-//   return new Promise(navigator.getUserMedia(constraints, function (stream) {
-//     videoStream = stream
-//     start()
-//   }).eror(callback));
-// }
-
 
 
 var MEDIA_CONSTRAINTS = {
@@ -46,17 +36,11 @@ var MEDIA_CONSTRAINTS = {
     }
 }
 
-// Somehow, the UAParser constructor gets an empty window object.
-// We need to pass the user agent string in order to get information
-var ua = (window && window.navigator) ? window.navigator.userAgent : ''
-var parser = new UAParser(ua)
-var browser = parser.getBrowser()
-
 var usePlanB = false
-if (browser.name === 'Chrome' || browser.name === 'Chromium') {
-    logger.info(browser.name + ": using SDP PlanB")
-    usePlanB = true
-}
+// if (browser.name === 'Chrome' || browser.name === 'Chromium') {
+//     logger.info(browser.name + ": using SDP PlanB")
+//     usePlanB = true
+// }
 
 function noop(error) {
     if (error) logger.error(error)
@@ -670,6 +654,7 @@ function createEnableDescriptor(type) {
         set: function (value) {
             function trackSetEnable(track) {
                 track.enabled = value
+                console.log("track:", track, " enabled:", value);
             }
 
             this.peerConnection.getLocalStreams().forEach(function (stream) {
@@ -775,13 +760,10 @@ function WebRtcPeerSendrecv(options, callback) {
 }
 inherits(WebRtcPeerSendrecv, WebRtcPeer)
 
-function harkUtils(stream, options) {
-    return hark(stream, options);
-}
 
 exports.bufferizeCandidates = bufferizeCandidates
 
 exports.WebRtcPeerRecvonly = WebRtcPeerRecvonly
 exports.WebRtcPeerSendonly = WebRtcPeerSendonly
 exports.WebRtcPeerSendrecv = WebRtcPeerSendrecv
-exports.hark = harkUtils
+

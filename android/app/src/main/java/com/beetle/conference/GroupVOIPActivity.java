@@ -1,5 +1,6 @@
 package com.beetle.conference;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -7,18 +8,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+
+import com.facebook.react.PackageList;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -26,6 +33,8 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.facebook.react.modules.core.PermissionAwareActivity;
+import com.facebook.react.modules.core.PermissionListener;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.uimanager.ViewManager;
@@ -35,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBtnHandler {
+public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBtnHandler, PermissionAwareActivity {
     private final String TAG = "face";
 
 
@@ -51,6 +60,11 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
     private Handler mainHandler;
 
+    @Nullable
+    protected PermissionListener mPermissionListener;
+
+    private @Nullable Callback mPermissionsCallback;
+
     ReactNativeHost host;
 
     public class GroupVOIPModule extends ReactContextBaseJavaModule {
@@ -63,8 +77,6 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             return "GroupVOIPActivity";
         }
 
-
-
         @ReactMethod
         public void dismiss() {
             Runnable r = new Runnable() {
@@ -75,13 +87,9 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
             };
             mainHandler.post(r);
         }
-
-
     }
 
     class ConferencePackage implements ReactPackage {
-
-
         @Override
         public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
             return Collections.emptyList();
@@ -111,11 +119,14 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
 
         @Override
         protected List<ReactPackage> getPackages() {
-            List<ReactPackage> list = new ArrayList<>();
-            list.add(new MainReactPackage());
-            list.add(new ConferencePackage());
-            list.add(new WebRTCModulePackage());
-            return list;
+            List<ReactPackage> packages = new PackageList(this).getPackages();
+            packages.add(new ConferencePackage());
+            return packages;
+//            List<ReactPackage> list = new ArrayList<>();
+//            list.add(new MainReactPackage());
+//            list.add(new ConferencePackage());
+//            list.add(new WebRTCModulePackage());
+//            return list;
         }
     }
 
@@ -198,12 +209,19 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
     protected void onResume() {
         super.onResume();
 
+
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(headsetReceiver, filter);
 
         if (mReactInstanceManager != null) {
             mReactInstanceManager.onHostResume(this, this);
         }
+
+        if (mPermissionsCallback != null) {
+            mPermissionsCallback.invoke();
+            mPermissionsCallback = null;
+        }
+
     }
 
     @Override
@@ -243,6 +261,35 @@ public class GroupVOIPActivity extends Activity implements DefaultHardwareBackBt
     }
 
 
+    protected boolean shouldAskPermission() {
+        if (BuildConfig.DEBUG) {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    !Settings.canDrawOverlays(this);
+        } else {
+            return false;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+        mPermissionListener = listener;
+        requestPermissions(permissions, requestCode);
+    }
+
+
+    public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+        mPermissionsCallback =
+                new Callback() {
+                    @Override
+                    public void invoke(Object... args) {
+                        if (mPermissionListener != null
+                                && mPermissionListener.onRequestPermissionsResult(
+                                requestCode, permissions, grantResults)) {
+                            mPermissionListener = null;
+                        }
+                    }
+                };
+    }
 
     private class MusicIntentReceiver extends BroadcastReceiver {
         @Override

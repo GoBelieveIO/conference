@@ -1,11 +1,10 @@
 package com.beetle.conference;
 
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +20,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * LoginActivity
@@ -40,9 +40,6 @@ public class LoginActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
-
-
 
     public void enterRoom(View v) {
         EditText uidEditText = (EditText)findViewById(R.id.et_username);
@@ -141,12 +138,8 @@ public class LoginActivity extends FragmentActivity {
         return "";
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        super.onActivityResult(requestCode, resultCode, data);
     }
-
-
 }

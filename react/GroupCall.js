@@ -14,10 +14,12 @@ import {
 import {
     NativeModules,
     NativeAppEventEmitter,
-    BackAndroid
+    BackHandler
 } from 'react-native';
 
 import {RTCView} from 'react-native-webrtc';
+
+import {request, check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 import Permissions from 'react-native-permissions';
 var native = (Platform.OS == 'android') ?
@@ -92,19 +94,15 @@ class GroupCall extends Component {
 	    case 'iceCandidate':
                 this.onIceCandidate(parsedMessage);
 	        break;
+        case 'pong':
+            break;
 	    default:
 	        console.error('Unrecognized message', parsedMessage);
         }
         
     }
-
-    /**
-     * Inits new connection and conference when conference screen is entered.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillMount() {
+    
+    componentDidMount() {
         this.subscription = NativeAppEventEmitter.addListener(
             'onRemoteRefuse',
             (event) => {
@@ -113,49 +111,37 @@ class GroupCall extends Component {
             }
         );
          
-        BackAndroid.addEventListener('hardwareBackPress', this._handleBack);
+        BackHandler.addEventListener('hardwareBackPress', this._handleBack);
+        const camera = Platform.OS == "android"  ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
+        const microphone = Platform.OS == "android"  ? PERMISSIONS.ANDROID.RECORD_AUDIO : PERMISSIONS.IOS.MICROPHONE;
         Promise.resolve()
-               .then(() => this.requestPermission('camera'))
-               .then(() => this.requestPermission('microphone'))
+               .then(() => this.requestPermission(camera))
+               .then(() => this.requestPermission(microphone))
                .then(() => {
                    this.pingTimer = setInterval(this.ping, 1000);
                    this.connect();
+               }, (err) => {
+                   console.log("request permission err:", err);
                });
     }
 
-    
-    componentDidMount() {
-        
-    }
-
     requestPermission(permission) {
-        return Permissions.check(permission)
-                          .then(response => {
-                              console.log("permission:" + permission + " " + response);
-                              if (response == 'authorized') {
-                                  
-                              } else if (response == 'undetermined') {
-                                  return response;
-                              } else if (response == 'denied' || 
-                                         response == 'restricted') {
-                                  throw response;
-                              }
-                          })
-                          .then(() => Permissions.request(permission))
-                          .then((response) => {
-                              console.log("permission:" + permission + " " + response);
-                              if (response == 'authorized') {
-                                  return response;
-                              } else if (response == 'undetermined') {
-                                  throw response;
-                              } else if (response == 'denied' || 
-                                         response == 'restricted') {
-                                  throw response;
-                              }                               
-                          })
-                          .catch((err) => {
-                              console.log("request permission:", permission, " err:", err);
-                          });        
+        return check(permission)
+            .then((result) => {
+                switch (result) {
+                    case RESULTS.GRANTED:
+                        return result;
+                    default:
+                        return request(permission);
+                }
+            })
+            .then((result) => {
+                if (result == RESULTS.GRANTED) {
+                    return result;
+                } else {
+                    throw result;
+                }
+            });
     }
 
 
@@ -171,7 +157,7 @@ class GroupCall extends Component {
 
         this.subscription.remove();
 
-        BackAndroid.removeEventListener('hardwareBackPress', this._handleBack)
+        BackHandler.removeEventListener('hardwareBackPress', this._handleBack)
 
     }
 
@@ -257,7 +243,8 @@ class GroupCall extends Component {
                         
                         <TouchableHighlight onPress={this._toggleAudio}
                                             style = {{ borderRadius: 35,
-                                                       padding:16,
+                                                       paddingLeft:16,
+                                                       paddingRight:16,   
                                                        backgroundColor:"white",
                                                        justifyContent: 'center'}}
                                             underlayColor="aliceblue">
@@ -276,7 +263,8 @@ class GroupCall extends Component {
                         <TouchableHighlight onPress={this._handleBack}
                                             style = {{
                                                 borderRadius: 35,
-                                                padding:16,                                                
+                                                paddingLeft:16,
+                                                paddingRight:16,                                               
                                                 backgroundColor:"red",
                                                 justifyContent: 'center'
                                             }}
@@ -286,7 +274,8 @@ class GroupCall extends Component {
                         
                         <TouchableHighlight onPress={this._toggleVideo}
                                             style = {{borderRadius: 35,
-                                                      padding:16,                         
+                                                      paddingLeft:16,
+                                                      paddingRight:16,                     
                                                       backgroundColor:"white", 
                                                       justifyContent: 'center'}}
                                             underlayColor="aliceblue">
@@ -412,22 +401,21 @@ class GroupCall extends Component {
 
     onIceCandidate(request) {
         var participants = this.state.participants;
-        var participant = participants.find(function(p) {
+        var participant = participants.find(function (p) {
             return p.name == request.name
         });
 
         if (!participant) {
             return;
         }
-        
+
         participant.rtcPeer.addIceCandidate(request.candidate, function (error) {
-	    if (error) {
-		console.error("Error adding candidate: " + error);
-		return;
-	    } else {
+            if (error) {
+                console.error("Error adding candidate: " + error);
+            } else {
                 console.log("add icecandidate success");
             }
-	});        
+        });
     }
     
     onNewParticipant(request) {
@@ -437,51 +425,52 @@ class GroupCall extends Component {
 
     receiveVideoResponse(result) {
         var participants = this.state.participants;
-        var participant = participants.find(function(p) {
+        var participant = participants.find(function (p) {
             return p.name == result.name
         });
 
         if (!participant) {
             return;
         }
-        participant.rtcPeer.processAnswer (result.sdpAnswer, function (error) {
-	    if (error) return console.error (error);
+        participant.rtcPeer.processAnswer(result.sdpAnswer, function (error) {
+            if (error) return console.error(error);
         });
     }
 
 
     onExistingParticipants(msg) {
         var constraints = {
-	    audio : true,
-	    video : {
-                facingMode: "user",                
-	        mandatory : {
-		    maxFrameRate : 15,
-		    minFrameRate : 15
-	        }
-	    }
+            audio: true,
+            video: {
+                facingMode: "user",
+                mandatory: {
+                    maxFrameRate: 15,
+                    minFrameRate: 15
+                }
+            }
         };
         console.log(this.name + " registered in room " + this.room);
-        
+
         var participant = new Participant(this.name, this.sendMessage.bind(this));
         var participants = this.state.participants;
         participants.push(participant);
-	
-	var options = {
-	    mediaConstraints: constraints,
-	    onicecandidate: participant.onIceCandidate.bind(participant)
-	}
-	participant.rtcPeer = new WebRtcPeer.WebRtcPeerSendonly(options,
-								function (error) {
-								    if(error) {
-									return console.error(error);
-								    }
-								    this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-								});
-	
-	var self = this;
-	participant.rtcPeer.on('localstream', function(stream) {
-	    console.log("on local stream:", stream.toURL());
+
+        var options = {
+            mediaConstraints: constraints,
+            onicecandidate: participant.onIceCandidate.bind(participant)
+        }
+        participant.rtcPeer = new WebRtcPeer.WebRtcPeerSendonly(options,
+            function (error) {
+                if (error) {
+                    console.log("create webrtc peer error:", error);
+                    return;
+                }
+                this.generateOffer(participant.offerToReceiveVideo.bind(participant));
+            });
+
+        var self = this;
+        participant.rtcPeer.on('localstream', function (stream) {
+            console.log("on local stream:", stream.toURL());
             participant.videoURL = stream.toURL();
 
             if (self.state.videoMuted) {
@@ -494,15 +483,17 @@ class GroupCall extends Component {
                 participant.rtcPeer.audioEnabled = false;
             }
 
-            self.forceUpdate();            
-	});
+            self.forceUpdate();
+        });
 
-        this.setState({participants:participants});
-        
+        this.setState({
+            participants: participants
+        });
+
         var data = msg.data.slice();
-	data.forEach((p) => {
-	    this.receiveVideo(p);		 
-	})
+        data.forEach((p) => {
+            this.receiveVideo(p);
+        })
 
     }
 

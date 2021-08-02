@@ -48,6 +48,7 @@
     <!-- 华为push所需的权限 end-->
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -62,11 +63,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.beetle.conference.ConferenceActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name" >
-        </activity>
+
 
         <activity
             android:name="com.beetle.conference.GroupVOIPActivity"
