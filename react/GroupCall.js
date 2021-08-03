@@ -13,27 +13,40 @@ import {
 
 import {
     NativeModules,
-    NativeAppEventEmitter,
     BackHandler
 } from 'react-native';
 
+import RoomClient, {
+	ROOM_STATE_EVENT, 
+	NEW_PEER_EVENT, 
+	PEER_CLOSED_EVENT, 
+	ADD_PRODUCER_EVENT, 
+	REMOVE_PRODUCER_EVENT,
+	PRODUCER_PAUSED_EVENT,
+	PRODUCER_RESUMED_EVENT,
+	REPLACE_PRODUCER_TRACK_EVENT,
+	ADD_CONSUMER_EVENT,
+	CONSUMER_CLOSED_EVENT,
+	CONSUMER_PAUSED_EVENT,
+	ACTIVE_SPEAKER_EVENT,
+	CONSUMER_RESUMED_EVENT
+} from "./RoomClient";
+
+import randomName from './randomName';
 import {RTCView} from 'react-native-webrtc';
 
 import {request, check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
-import Permissions from 'react-native-permissions';
 var native = (Platform.OS == 'android') ?
              NativeModules.GroupVOIPActivity :
              NativeModules.GroupVOIPViewController;
 
-
-var Participant = require('./participant.js');
-
-var WebRtcPeer = require('./WebRtcPeer.js');
-
 var ScreenWidth = Dimensions.get('window').width;
 
-const WS_URL = 'wss://jitsi.gobelieve.io/groupcall';
+const WS_URL = 'ws://192.168.1.101:4444/';
+function getProtooUrl({ roomId, peerId }) {
+	return `${WS_URL}?roomId=${roomId}&peerId=${peerId}`;
+}
 
 /**
  * The groupvoip page of the application.
@@ -52,17 +65,21 @@ class GroupCall extends Component {
         this._handleBack = this._handleBack.bind(this);
         this._toggleAudio = this._toggleAudio.bind(this);
         this._toggleVideo = this._toggleVideo.bind(this);
+
+        this.onRoomState = this.onRoomState.bind(this);
+		this.onNewPeer = this.onNewPeer.bind(this);
+		this.onPeerClosed = this.onPeerClosed.bind(this);
+		this.onAddProducer = this.onAddProducer.bind(this);
+		this.onRemoveProducer = this.onRemoveProducer.bind(this);
+		this.onReplaceProducerTrack = this.onReplaceProducerTrack.bind(this);
+		this.onAddConsumer = this.onAddConsumer.bind(this);
+		this.onConsumerClosed = this.onConsumerClosed.bind(this);
+		this.onConsumerPaused = this.onConsumerPaused.bind(this);
+		this.onConsumerResumed = this.onConsumerResumed.bind(this);
+
         
-        this.onmessage = this.onmessage.bind(this);
-        this.ping = this.ping.bind(this);
-        
-        this.state = {
-            participants:[],
-            audioMuted:false,
-            videoMuted:true,
-            duration:0
-        };
-        
+        console.log(typeof(this.props.room), typeof(this.props.name));
+
         this.name = this.props.name;
         this.room = this.props.room;
         this.token = this.props.token;
@@ -71,45 +88,78 @@ class GroupCall extends Component {
         this.closeTimestamp = 0;
         
         console.log("name:", this.name, " room:", this.room, " token:", this.token);
+
+        console.log("navigator:", navigator, navigator.userAgent);
+        const displayName = randomName(); 
+
+        const device = {
+            flag : 'rn',
+            name    : "rn",
+            version : '0.64.0'
+        };
+
+        const useSimulcast = false;
+        const useSharingSimulcast = false;
+        const forceTcp = false;
+        const produce = true;
+        const consume = true;
+        const forceH264 = false;
+        const forceVP9 = false;
+        const svc = undefined;
+        const datachannel = false;
+        const externalVideo = false;
+        const e2eKey = undefined;
+        const hack = false;
+		const protooUrl = getProtooUrl({ roomId:this.props.room, peerId:this.props.name });
+
+		console.log("protoo url:", protooUrl);
+
+        const roomClient = new RoomClient({
+            roomId: this.props.room,
+            peerId: this.props.name,
+            displayName,
+            device,
+            protooUrl,
+            handlerName: undefined,
+            useSimulcast,
+            useSharingSimulcast,
+            forceTcp,
+            produce,
+            consume,
+            forceH264,
+            forceVP9,
+            svc,
+            datachannel,
+            externalVideo,
+            e2eKey,
+            hack
+        });
+
+        this.state = {
+            roomClient: roomClient,
+            producers : [],
+			peers     : [],
+
+            audioMuted: false,
+            videoMuted: false,
+            duration: 0
+        };
     }
 
-
-    onmessage(message) {
-        var parsedMessage = JSON.parse(message.data);
-        console.info('Received message: ' + message.data);
-
-        switch (parsedMessage.id) {
-	    case 'existingParticipants':
-	        this.onExistingParticipants(parsedMessage);
-	        break;
-	    case 'newParticipantArrived':
-	        this.onNewParticipant(parsedMessage);
-	        break;
-	    case 'participantLeft':
-	        this.onParticipantLeft(parsedMessage);
-	        break;
-	    case 'receiveVideoAnswer':
-	        this.receiveVideoResponse(parsedMessage);
-	        break;
-	    case 'iceCandidate':
-                this.onIceCandidate(parsedMessage);
-	        break;
-        case 'pong':
-            break;
-	    default:
-	        console.error('Unrecognized message', parsedMessage);
-        }
-        
-    }
     
     componentDidMount() {
-        this.subscription = NativeAppEventEmitter.addListener(
-            'onRemoteRefuse',
-            (event) => {
-                console.log("on remote refuse");
-                this._onCancel();
-            }
-        );
+        const roomClient = this.state.roomClient;
+        roomClient.on(ROOM_STATE_EVENT, this.onRoomState);
+		roomClient.on(NEW_PEER_EVENT, this.onNewPeer);
+		roomClient.on(PEER_CLOSED_EVENT, this.onPeerClosed);
+		roomClient.on(ADD_PRODUCER_EVENT, this.onAddProducer);
+		roomClient.on(REMOVE_PRODUCER_EVENT, this.onRemoveProducer);
+		roomClient.on(REPLACE_PRODUCER_TRACK_EVENT, this.onReplaceProducerTrack);
+		roomClient.on(ADD_CONSUMER_EVENT, this.onAddConsumer);
+		roomClient.on(CONSUMER_CLOSED_EVENT, this.onConsumerClosed);
+		roomClient.on(CONSUMER_PAUSED_EVENT, this.onConsumerPaused);
+		roomClient.on(CONSUMER_RESUMED_EVENT, this.onConsumerResumed);
+
          
         BackHandler.addEventListener('hardwareBackPress', this._handleBack);
         const camera = Platform.OS == "android"  ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
@@ -118,11 +168,26 @@ class GroupCall extends Component {
                .then(() => this.requestPermission(camera))
                .then(() => this.requestPermission(microphone))
                .then(() => {
-                   this.pingTimer = setInterval(this.ping, 1000);
-                   this.connect();
+                   roomClient.join();
                }, (err) => {
                    console.log("request permission err:", err);
                });
+    }
+
+
+    /**
+     * Destroys connection, conference and local tracks when conference screen
+     * is left. Clears {@link #_toolbarTimeout} before the component unmounts.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+     componentWillUnmount() {
+        console.log("conference component will unmount");
+
+        BackHandler.removeEventListener('hardwareBackPress', this._handleBack)
+
+        this.state.roomClient.close();
     }
 
     requestPermission(permission) {
@@ -145,21 +210,210 @@ class GroupCall extends Component {
     }
 
 
-    /**
-     * Destroys connection, conference and local tracks when conference screen
-     * is left. Clears {@link #_toolbarTimeout} before the component unmounts.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        console.log("conference component will unmount");
+    onRoomState(state) 
+	{
+		console.log("room state:", state);
 
-        this.subscription.remove();
+		if (state == 'closed') 
+		{
+			this.setState({ peers:[], producers:[] });
+		}
+	}
 
-        BackHandler.removeEventListener('hardwareBackPress', this._handleBack)
+	onNewPeer(peer) 
+	{
+		console.log("new peer:", peer);
 
-    }
+		const old = this.state.peers.find(function(p) 
+		{
+			return (p.id == peer.id);
+		});
+
+		if (old) 
+		{
+			return;
+		}
+
+		this.state.peers.push(peer);
+		this.setState({});
+	}
+
+	onPeerClosed(peerId) 
+	{
+		console.log("peer closed:", peerId);
+		const index = this.state.peers.findIndex(function(p) 
+		{
+			return (p.id == peerId);
+		});
+
+		if (index == -1)
+		{
+			return;
+		}
+
+		this.state.peers.splice(index, 1);
+		this.setState({});
+	}
+
+	onAddProducer(producer) 
+	{
+		console.log("add producer:", producer);
+        if (producer.track.kind == "video") {
+            const stream = new MediaStream();
+            stream.addTrack(producer.track);
+            producer.stream = stream;
+        }
+		this.state.producers.push(producer);
+		this.setState({});
+	}
+
+	onRemoveProducer(producerId) 
+	{
+		console.log("remove producer:", producerId);
+
+		const index = this.state.producers.findIndex(function(p) 
+		{
+			return p.id == producerId;
+		});
+
+		if (index == -1) 
+		{
+			return -1;
+		}
+
+		this.state.producers.splice(index, 1);
+		this.setState({});
+	}
+
+	onReplaceProducerTrack(producerId, track) 
+	{
+		console.log("replace producer track", producerId, track);
+
+		const index = this.state.producers.findIndex(function(p) 
+		{
+			return p.id == producerId;
+		});
+
+		if (index == -1) 
+		{
+			return -1;
+		}
+
+		const producer = this.state.producers[index];
+
+		producer.track = track;
+		this.setState({});
+	}
+
+	onAddConsumer(consumer, peerId) 
+	{
+		console.log("on add consumer:", consumer, peerId);
+
+		const peer = this.state.peers.find(function(p)
+		{
+			return (p.id == peerId);
+		});
+
+		if (!peer) 
+		{
+			return;
+		}
+
+        if (consumer.track.kind == "video" ) {
+            var stream = new MediaStream();
+            stream.addTrack(consumer.track);
+            consumer.stream = stream;
+        }
+
+		peer.consumers.push(consumer);
+		this.setState({});
+	}
+
+	onConsumerClosed(consumerId, peerId) 
+	{
+		console.log("on consumer closed:", consumerId);
+
+		const peer = this.state.peers.find(function(p)
+		{
+			return (p.id == peerId);
+		});
+
+		if (!peer) 
+		{
+			return;
+		}
+
+		const index = peer.consumers.findIndex(function(c) 
+		{
+			return (c.id == consumerId);
+		});
+
+		if (index == -1) 
+		{
+			return;
+		}
+
+		peer.consumers.splice(index, 1);
+		this.setState({});
+	}
+
+	onConsumerPaused(consumerId, peerId, originator) 
+	{
+		console.log("on consumer paused:", consumerId, originator);
+
+		const peer = this.state.peers.find(function(p)
+		{
+			return (p.id == peerId);
+		});
+
+		if (!peer) 
+		{
+			return;
+		}
+
+		const index = peer.consumers.findIndex(function(c) 
+		{
+			return (c.id == consumerId);
+		});
+
+		if (index == -1) 
+		{
+			return;
+		}
+
+		peer.consumers[index].paused = true;
+		this.setState({});
+	}
+
+	onConsumerResumed(consumerId, peerId, originator) 
+	{
+		console.log("on consumer resumed:", consumerId, originator);
+
+		const peer = this.state.peers.find(function(p)
+		{
+			return (p.id == peerId);
+		});
+
+		if (!peer) 
+		{
+			return;
+		}
+
+		const index = peer.consumers.findIndex(function(c) 
+		{
+			return (c.id == consumerId);
+		});
+
+		if (index == -1) 
+		{
+			return;
+		}
+
+		peer.consumers[index].paused = false;
+		this.setState({});
+	}
+
+  
 
     formatDuration(duration) {
         //00:00
@@ -181,44 +435,125 @@ class GroupCall extends Component {
         return t;
     }
 
+ 
+    _toggleAudio() {
+        if (this.state.roomClient.state != "connected") {
+            return;
+        }
+
+        console.log("toggle audio");
+
+        var audioMuted = !this.state.audioMuted;
+        if (audioMuted) {
+            this.state.roomClient.muteMic();
+        } else {
+            this.state.roomClient.unmuteMic();
+        }
+        this.setState({audioMuted:audioMuted});
+    }
+
+    _toggleVideo() {
+        if (this.state.roomClient.state != "connected") {
+            return;
+        }
+
+        console.log("toggle video");
+
+        var videoMuted = !this.state.videoMuted;
+
+        if (videoMuted) {
+            this.state.roomClient.disableWebcam();
+        } else {
+            this.state.roomClient.enableWebcam();
+        }
+        this.setState({videoMuted:videoMuted})
+    }
+    
+    _handleBack() {
+        console.log("hangup...");
+        this.finished = true;
+        this.leaveRoom();
+        native.dismiss();
+        return false;
+    }
+
+    leaveRoom() {
+        this.state.roomClient.close();
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+     render() {
+
+        const audioProducer = this.state.producers.find(function(p)
+		{
+			return p.track.kind == "audio";
+		});
+
+		const videoProducer = this.state.producers.find(function(p)
+		{
+			return p.track.kind == "video";
+		});
+
+
         var videoMuted = this.state.videoMuted;
         var audioMuted = this.state.audioMuted;
 
         var duration = this.formatDuration(this.state.duration);
 
-        
         var remoteViews = [];
-        participants = this.state.participants;
-        console.log("participants:", participants.length);
-
         var h = ScreenWidth*0.5;
         var w = ScreenWidth*0.5;
+
+        var participants = [];
+        if (videoProducer && videoProducer.stream) {
+            participants.push({id:this.name, stream:videoProducer.stream});
+        } else {
+            participants.push({id:this.name});
+        }
+
+        this.state.peers.forEach((peer) => {
+            const consumersArray = peer.consumers;
+            const videoConsumer =
+                consumersArray.find((consumer) => consumer.track.kind === 'video');
+            if (videoConsumer && videoConsumer.stream) {
+                participants.push({id:peer.id, stream:videoConsumer.stream});
+            } else {
+                participants.push({id:peer.id});
+            }
+        });
+        
         for (var i = 0; i < participants.length; i+= 2) {
             if (i + 1 < participants.length) {
                 var participant1 = participants[i];
                 var participant2 = participants[i+1];
-                var videoURL1 = participant1.videoURL;
-                var videoURL2 = participant2.videoURL;
+                var videoURL1 = participant1.stream ? participant1.stream.toURL() : undefined;
+                var videoURL2 = participant2.stream ? participant2.stream.toURL() : undefined;
                 remoteViews.push((
-                    <View style={{height:h, flex:1, flexDirection:"row"}} key={i} >
-                        <RTCView style={{height:h, width:w}} objectFit="cover" streamURL={videoURL1}/>
-                        <RTCView style={{height:h, width:w}} objectFit="cover" streamURL={videoURL2}/>
+                    <View style={{height:h, flex:1, flexDirection:"row"}} key={participant1.id} >
+                        <RTCView style={{height:h, width:w}} 
+                            objectFit="cover" 
+                            mirror={participant1.id==this.props.name}  
+                            streamURL={videoURL1}/>
+                        <RTCView style={{height:h, width:w}} 
+                            objectFit="cover"     
+                            mirror={participant2.id==this.props.name}  
+                            streamURL={videoURL2}/>
                     </View>
                 ));
             } else {
                 var participant = participants[i];
-                var videoURL = participant.videoURL;
-                
+                var videoURL = participant.stream ? participant.stream.toURL() : undefined;
                 remoteViews.push((
-                    <View style={{height:h, flex:1, flexDirection:"row", justifyContent:"center"}} key={i}>
-                        <RTCView style={{height:h, width:w}} objectFit="cover" streamURL={videoURL}/>
+                    <View style={{height:h, flex:1, flexDirection:"row", justifyContent:"center"}} key={participant.id}>
+                        <RTCView style={{height:h, width:w}} 
+                            objectFit="cover" 
+                            mirror={participant.id==this.props.name} 
+                            streamURL={videoURL}/>
                     </View>
                 ))
             }
@@ -286,298 +621,6 @@ class GroupCall extends Component {
                 </View>
             </View>
         );
-    }
- 
-    _toggleAudio() {
-        console.log("toggle audio");
-        var name = this.name;
-        var participants = this.state.participants;
-        var participant = participants.find(function(p) {
-            return p.name == name;
-        });
-
-        if (!participant) {
-            return;
-        }
-        
-        var audioMuted = !this.state.audioMuted;
-        participant.rtcPeer.audioEnabled = !audioMuted;
-        
-        this.setState({audioMuted:audioMuted});
-    }
-
-    _toggleVideo() {
-        console.log("toggle video");
-        var name = this.name;
-        var participants = this.state.participants;
-        var participant = participants.find(function(p) {
-            return p.name == name;
-        });
-
-        if (!participant) {
-            return;
-        }
-        
-        var videoMuted = !this.state.videoMuted;
-        participant.rtcPeer.videoEnabled = !videoMuted;
-        this.setState({videoMuted:videoMuted})
-    }
-    
-    _handleBack() {
-        console.log("hangup...");
-        this.finished = true;
-        this.leaveRoom();
-        native.dismiss();
-        return false;
-    }
-
-    connect() {
-        var ws = new WebSocket(WS_URL);
-        var self = this;
-        this.ws = ws;                   
-        this.ws.onmessage = this.onmessage;
-        this.ws.onclose = function(e) {
-            console.log("websockets on close:", e.code, e.reason, e.wasClean);
-            self.connectFailCount += 1;
-            var now = new Date().getTime()
-            self.closeTimestamp = Math.floor(now/1000);
-
-            self.state.participants.forEach((p) => {
-                p.dispose();
-            })
-
-            self.setState({participants:[]});
-        }
-        
-        this.ws.onerror = function() {
-            console.log("websockets on error");
-        }
-        
-        this.ws.onopen = function() {
-            console.log("websockets on open");
-            this.connectFailCount = 0;
-            self.register();
-        };        
-    }
-    
-    register() {
-        var message = {
-	    id : 'joinRoom',
-	    name : this.name,
-	    room : this.room,
-            token: this.token,
-        }
-        this.sendMessage(message);
-    }
-
-    ping() {
-        //更新通话时间
-        var duration = this.state.duration;
-        duration += 1;
-       
-        this.setState({duration:duration});
-
-        //检查链接是否断开
-        if (!this.ws || this.ws.readyState == WebSocket.CLOSED) {
-            var now = new Date().getTime();
-            now = Math.floor(now/1000);
-
-            //失败次数越多，重连间隔的时间越长
-            if (now - this.closeTimestamp > this.connectFailCount ||
-                now - this.closeTimestamp > 60) {
-                this.connect();                
-            }
-            return;
-        }
-
-        if (duration%10 == 0) {
-            //10s发一次ping
-            var message = {
-	        id : 'ping'
-            }
-            this.sendMessage(message);              
-        }
-    }
-
-    onIceCandidate(request) {
-        var participants = this.state.participants;
-        var participant = participants.find(function (p) {
-            return p.name == request.name
-        });
-
-        if (!participant) {
-            return;
-        }
-
-        participant.rtcPeer.addIceCandidate(request.candidate, function (error) {
-            if (error) {
-                console.error("Error adding candidate: " + error);
-            } else {
-                console.log("add icecandidate success");
-            }
-        });
-    }
-    
-    onNewParticipant(request) {
-        console.log("on new participant:", request.name);
-        this.receiveVideo(request.name);
-    }
-
-    receiveVideoResponse(result) {
-        var participants = this.state.participants;
-        var participant = participants.find(function (p) {
-            return p.name == result.name
-        });
-
-        if (!participant) {
-            return;
-        }
-        participant.rtcPeer.processAnswer(result.sdpAnswer, function (error) {
-            if (error) return console.error(error);
-        });
-    }
-
-
-    onExistingParticipants(msg) {
-        var constraints = {
-            audio: true,
-            video: {
-                facingMode: "user",
-                mandatory: {
-                    maxFrameRate: 15,
-                    minFrameRate: 15
-                }
-            }
-        };
-        console.log(this.name + " registered in room " + this.room);
-
-        var participant = new Participant(this.name, this.sendMessage.bind(this));
-        var participants = this.state.participants;
-        participants.push(participant);
-
-        var options = {
-            mediaConstraints: constraints,
-            onicecandidate: participant.onIceCandidate.bind(participant)
-        }
-        participant.rtcPeer = new WebRtcPeer.WebRtcPeerSendonly(options,
-            function (error) {
-                if (error) {
-                    console.log("create webrtc peer error:", error);
-                    return;
-                }
-                this.generateOffer(participant.offerToReceiveVideo.bind(participant));
-            });
-
-        var self = this;
-        participant.rtcPeer.on('localstream', function (stream) {
-            console.log("on local stream:", stream.toURL());
-            participant.videoURL = stream.toURL();
-
-            if (self.state.videoMuted) {
-                console.log("disable video");
-                participant.rtcPeer.videoEnabled = false;
-            }
-
-            if (self.state.audioMuted) {
-                console.log("disable audio");
-                participant.rtcPeer.audioEnabled = false;
-            }
-
-            self.forceUpdate();
-        });
-
-        this.setState({
-            participants: participants
-        });
-
-        var data = msg.data.slice();
-        data.forEach((p) => {
-            this.receiveVideo(p);
-        })
-
-    }
-
-    leaveRoom() {
-        console.log("leave room");
-        this.sendMessage({
-	    id : 'leaveRoom'
-        });
-
-        this.state.participants.forEach((p) => {
-            p.dispose();
-        })
-
-        this.setState({participants:[]});
-
-        if (this.ws) {
-            this.ws.close();
-        }
-        if (this.pingTimer) {
-            clearInterval(this.pingTimer);
-            this.pingTimer = 0;
-        }
-    }
-
-    receiveVideo(sender) {
-        var participants = this.state.participants;
-        var participant = participants.find(function(p) {
-            p.name == sender;
-        });
-
-        if (participant) {
-            console.log("participant:", sender, " exists");
-            return;
-        }
-
-        
-        participant = new Participant(sender, this.sendMessage.bind(this));
-        participants.push(participant);
-
-        var options = {
-            onicecandidate: participant.onIceCandidate.bind(participant)
-        }
-
-        participant.rtcPeer = new WebRtcPeer.WebRtcPeerRecvonly(options,
-			                                        function (error) {
-			                                            if(error) {
-				                                        return console.error(error);
-			                                            }
-			                                            this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-	                                                        });
-        participant.rtcPeer.on('remotestream', (stream) => {
-            console.log("remote video url:", stream.toURL());
-            participant.videoURL = stream.toURL();
-            this.forceUpdate();
-        });
-        this.setState({participants:participants});
-    }
-
-    onParticipantLeft(request) {
-        console.log('Participant ' + request.name + ' left');
-
-        var participants = this.state.participants;
-        var index = participants.findIndex(function(p) {
-            return p.name == request.name
-        });
-
-        if (!index == -1) {
-            return;
-        }
-        
-        var participant = participants[index];
-        participant.dispose();
-        participants.splice(index, 1);
-        this.setState({participants:participants});
-    }
-
-    sendMessage(message) {
-        if (!this.ws || this.ws.readyState != WebSocket.OPEN) {
-            return;
-        }
-        
-        var jsonMessage = JSON.stringify(message);
-        console.log('Senging message: ' + jsonMessage);
-        this.ws.send(jsonMessage);
     }
 }
 
