@@ -1760,7 +1760,21 @@ export default class RoomClient extends EventEmitter
 		if (len === 0)
 			this._webcam.device = null;
 		else if (!this._webcams.has(currentWebcamId))
-			this._webcam.device = array[0];
+		{
+			let device = array.find(function(d)
+			{
+				return d.facing == 'front';
+			});
+
+			if (device) 
+			{
+				this._webcam.device = device;
+			} 
+			else 
+			{
+				this._webcam.device = array[0];
+			}
+		}
 	}
 
 	_getWebcamType(device)

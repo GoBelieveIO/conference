@@ -10,10 +10,9 @@
 #import "ViewController.h"
 #import "MBProgressHUD.h"
 
-#import <imsdk/IMService.h>
 #import "GroupVOIPViewController.h"
 
-@interface ViewController ()<RTMessageObserver>
+@interface ViewController ()
 @property (weak, nonatomic)  UITextField *myTextField2;
 @property (weak, nonatomic)  UITextField *conferenceTextField;
 @end
@@ -102,6 +101,7 @@
             controller.currentUID = myUID;
             controller.channelID = conferenceID;
             controller.token = token;
+            controller.modalPresentationStyle = UIModalPresentationFullScreen;
             [self presentViewController:controller animated:YES completion:nil];
         });
     });
