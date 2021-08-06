@@ -1,9 +1,11 @@
 import { AppRegistry } from 'react-native';
 import { registerGlobals } from 'react-native-webrtc';
 import GroupCall from './GroupCall.js';
-
-console.log("navigator:", navigator, "productor", navigator.product);
+import RoomModule from "./RoomModule";
 registerGlobals();
+
+var roomModule = new RoomModule();
+
 AppRegistry.registerComponent('GroupCall', () => GroupCall);
 
 

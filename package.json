@@ -19,6 +19,7 @@
     "inherits": "^2.0.1",
     "mediasoup-client": "^3.6.36",
     "pokemon": "^2.2.0",
+    "prop-types": "^15.7.2",
     "protoo-client": "^4.0.5",
     "random-string": "^0.2.0",
     "react": "17.0.1",
@@ -28,5 +29,10 @@
     "sdp-translator": "^0.1.15",
     "uuid": "~2.0.1"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-native": "^3.11.0"
+  }
 }

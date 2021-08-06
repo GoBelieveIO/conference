@@ -1,14 +1,12 @@
 
-import React, { Component } from 'react';
+import React, {Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     Text,
-    ScrollView,
     TouchableHighlight,
-    Image,
     Platform,
     Dimensions,
-    StyleSheet    
 } from 'react-native';
 
 import {
@@ -624,7 +622,11 @@ class GroupCall extends Component {
     }
 }
 
-
+GroupCall.propTypes = {
+    name: PropTypes.string.isRequired,
+    room: PropTypes.string.isRequired,
+    token: PropTypes.string.isRequired,
+}
 export default GroupCall;
 
 

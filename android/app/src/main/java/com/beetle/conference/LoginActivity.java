@@ -30,6 +30,8 @@ public class LoginActivity extends FragmentActivity {
     private final String TAG = "demo";
     private final int REQUEST_CONFERENCE = 1;
 
+    private static boolean RN_UI = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,11 +80,11 @@ public class LoginActivity extends FragmentActivity {
 
                 Log.i(TAG, "uid:" + uid + " channel id:" + conferenceID + " token:" + result);
 
-                Intent intent = new Intent(LoginActivity.this, GroupVOIPActivity.class);
+                Intent intent = new Intent(LoginActivity.this, RN_UI ? GroupVOIPActivity.class : RoomActivity.class);
                 intent.putExtra("current_uid", uid);
                 intent.putExtra("channel_id", "" + conferenceID);
                 intent.putExtra("token", result);
-
+                
                 startActivityForResult(intent, REQUEST_CONFERENCE);
             }
         }.execute();

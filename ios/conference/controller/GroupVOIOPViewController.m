@@ -85,6 +85,7 @@ RCT_EXPORT_METHOD(dismiss) {
                             @"room":self.channelID,
                             @"token":self.token};
 
+    [bridge moduleForName:@""];
     
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"GroupCall" initialProperties:props];
     

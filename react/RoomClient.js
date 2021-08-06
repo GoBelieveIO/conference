@@ -12,7 +12,7 @@ export const PEER_CLOSED_EVENT = "peer_closed";
 export const ADD_PRODUCER_EVENT = "add_producer";
 export const REMOVE_PRODUCER_EVENT = "remove_producer";
 export const PRODUCER_PAUSED_EVENT = "producer_paused";
-export const PRODUCER_RESUMED_EVENT = "producer_paused";
+export const PRODUCER_RESUMED_EVENT = "producer_resumed";
 export const REPLACE_PRODUCER_TRACK_EVENT = "replace_producer_track";
 
 export const ADD_CONSUMER_EVENT = "new_consumer";
@@ -80,6 +80,8 @@ export default class RoomClient extends EventEmitter
 			useSharingSimulcast,
 			forceTcp,
 			produce,
+			produceVideo,
+			produceAudio,
 			consume,
 			forceH264,
 			forceVP9,
@@ -114,7 +116,15 @@ export default class RoomClient extends EventEmitter
 
 		// Whether we want to produce audio/video.
 		// @type {Boolean}
-		this._produce = produce;
+		if (produce) {
+			this._produceVideo = produce;
+			this._produceAudio = produce;
+			this._produce = produce;
+		} else {
+			this._produceVideo = produceVideo;
+			this._produceAudio = produceAudio;
+			this._produce = produceVideo || produceAudio;
+		}
 
 		// Whether we should consume.
 		// @type {Boolean}
@@ -257,7 +267,6 @@ export default class RoomClient extends EventEmitter
 		}
 	}
 
-
 	get state() 
 	{
 		return this._state;
@@ -268,16 +277,14 @@ export default class RoomClient extends EventEmitter
 		if (this._closed)
 			return;
 
-		if (this._state == "new") {
-			return;
-		}
-
 		this._closed = true;
 
 		logger.debug('close()');
 
 		// Close protoo Peer
-		this._protoo.close();
+		if (this._protoo) {
+			this._protoo.close();
+		}
 
 		// Close mediasoup Transports.
 		if (this._sendTransport)
@@ -534,8 +541,13 @@ export default class RoomClient extends EventEmitter
 				logger.debug('enableMic() | calling getUserMedia()');
 
 				const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
+		
 				track = stream.getAudioTracks()[0];
+
+				if ("release" in stream) {
+					//react native
+					stream.release(false);
+				}
 			}
 			else
 			{
@@ -607,7 +619,7 @@ export default class RoomClient extends EventEmitter
 		}
 		catch (error)
 		{
-		
+			console.log("request error:", error);
 		}
 
 		this._micProducer = null;
@@ -692,8 +704,12 @@ export default class RoomClient extends EventEmitter
 							...VIDEO_CONSTRAINS[resolution]
 						}
 					});
-
+	
 				track = stream.getVideoTracks()[0];
+				if ("release" in stream) {
+					//react native
+					stream.release(false);
+				}
 			}
 			else
 			{
@@ -814,7 +830,7 @@ export default class RoomClient extends EventEmitter
 		}
 		catch (error)
 		{
-	
+			console.log("request error:", error);
 		}
 
 		this._webcamProducer = null;
@@ -878,6 +894,16 @@ export default class RoomClient extends EventEmitter
 		}
 	}
 
+	//only work on react native
+	switchCamera() {
+		logger.debug('switchCamera()');
+
+		if (!this._webcamProducer)
+			return;
+
+		this._webcamProducer.track._switchCamera();
+	}
+
 	async changeWebcamResolution()
 	{
 		logger.debug('changeWebcamResolution()');
@@ -910,7 +936,12 @@ export default class RoomClient extends EventEmitter
 					}
 				});
 
+	
 			const track = stream.getVideoTracks()[0];
+			if ("release" in stream) {
+				//react native
+				stream.release(false);
+			}
 
 			await this._webcamProducer.replaceTrack({ track });
 
@@ -1080,7 +1111,7 @@ export default class RoomClient extends EventEmitter
 		}
 		catch (error)
 		{
-	
+			console.log("request error:", error);
 		}
 
 		this._shareProducer = null;
@@ -1633,8 +1664,12 @@ export default class RoomClient extends EventEmitter
 				this._me.canSendMic = this._mediasoupDevice.canProduce('audio');
 				this._me.canSendWebcam = this._mediasoupDevice.canProduce('video');
 
-				this.enableMic();
-				this.enableWebcam();
+				if (this._produceAudio) {
+					this.enableMic();
+				}
+				if (this._produceVideo) {
+					this.enableWebcam();
+				}
 
 				this._sendTransport.on('connectionstatechange', (connectionState) =>
 				{
@@ -1804,7 +1839,9 @@ export default class RoomClient extends EventEmitter
 
 			consumer.pause();
 
-			this.emit(CONSUMER_PAUSED_EVENT, consumer.id, "local");
+			const { peerId } = consumer.appData;
+
+			this.emit(CONSUMER_PAUSED_EVENT, consumer.id, peerId, "local");
 		}
 		catch (error)
 		{
@@ -1823,7 +1860,9 @@ export default class RoomClient extends EventEmitter
 
 			consumer.resume();
 
-			this.emit(CONSUMER_RESUMED_EVENT, consumer.id, "local");
+			const { peerId } = consumer.appData;
+
+			this.emit(CONSUMER_RESUMED_EVENT, consumer.id, peerId, "local");
 
 		}
 		catch (error)
