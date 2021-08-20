@@ -10,6 +10,7 @@
 #import "ViewController.h"
 #import "MBProgressHUD.h"
 #import "GroupVOIPViewController.h"
+#import "RoomViewController.h"
 
 
 @interface ViewController ()
@@ -98,12 +99,21 @@
                 return;
             }
             
+#ifdef RN
             GroupVOIPViewController *controller = [[GroupVOIPViewController alloc] init];
             controller.currentUID = myUID;
             controller.channelID = conferenceID;
             controller.token = token;
             controller.modalPresentationStyle = UIModalPresentationFullScreen;
             [self presentViewController:controller animated:YES completion:nil];
+#else
+            RoomViewController *controller = [[RoomViewController alloc] init];
+            controller.currentUID = myUID;
+            controller.channelID = conferenceID;
+            controller.token = token;
+            controller.modalPresentationStyle = UIModalPresentationFullScreen;
+            [self presentViewController:controller animated:YES completion:nil];
+#endif
         });
     });
 }

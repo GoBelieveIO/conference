@@ -2,6 +2,7 @@ import {
     Platform,
     NativeModules,
     DeviceEventEmitter,
+    NativeEventEmitter,
     NativeAppEventEmitter
 } from 'react-native';
 
@@ -21,9 +22,16 @@ import RoomClient, {
 	CONSUMER_RESUMED_EVENT
 } from "./RoomClient";
 
-var Emitter = Platform.OS === 'android' ? DeviceEventEmitter : NativeAppEventEmitter;
-
 var native = NativeModules.RoomModule;
+var Emitter;
+if (Platform.OS === 'android') {
+    Emitter = DeviceEventEmitter;
+} else {
+    Emitter = new NativeEventEmitter(native);
+}
+//? DeviceEventEmitter : NativeAppEventEmitter;
+
+
 
 const WS_URL = 'ws://192.168.1.101:4444/';
 function getProtooUrl({ roomId, peerId }) {

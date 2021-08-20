@@ -15,6 +15,7 @@
 #import <React/RCTEventDispatcher.h>
 #import <AVFoundation/AVFoundation.h>
 #import "AppDelegate.h"
+#import "WebRTCVideoView.h"
 
 
 static int64_t g_controllerCount = 0;

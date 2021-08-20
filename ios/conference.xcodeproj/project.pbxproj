@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,9 +12,12 @@
 		48C7A13E1A065BDA0020E7F6 /* end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13B1A065BDA0020E7F6 /* end.mp3 */; };
 		48C7A13F1A065BDA0020E7F6 /* start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 48C7A13C1A065BDA0020E7F6 /* start.mp3 */; };
 		6D06CF1A1E0F68BF0048AC85 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D06CF191E0F68BF0048AC85 /* ViewController.m */; };
+		6D2BD7A026CFE99B00FC03A9 /* RoomModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2BD79F26CFE99B00FC03A9 /* RoomModule.m */; };
+		6D2BD7A326CFF0A100FC03A9 /* WebRTCVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2BD7A126CFF0A100FC03A9 /* WebRTCVideoView.m */; };
 		6D401BCB1AAC7BAB0041ABC6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */; };
 		6D401C201AAC925C0041ABC6 /* apns.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6D401C1F1AAC925C0041ABC6 /* apns.caf */; };
 		6D4D55E11BA4033800247208 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D4D55E01BA4033800247208 /* VideoToolbox.framework */; };
+		6DAA8C7D26CFA51400B9CB21 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DAA8C7C26CFA51400B9CB21 /* RoomViewController.m */; };
 		6DF3996819EB9AAE009B03C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996719EB9AAE009B03C4 /* Foundation.framework */; };
 		6DF3996A19EB9AAE009B03C4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996919EB9AAE009B03C4 /* CoreGraphics.framework */; };
 		6DF3996C19EB9AAE009B03C4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DF3996B19EB9AAE009B03C4 /* UIKit.framework */; };
@@ -53,9 +56,15 @@
 		48DC1A121A0686F6004EC222 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6D06CF181E0F68BF0048AC85 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		6D06CF191E0F68BF0048AC85 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		6D2BD79E26CFE99B00FC03A9 /* RoomModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoomModule.h; sourceTree = "<group>"; };
+		6D2BD79F26CFE99B00FC03A9 /* RoomModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RoomModule.m; sourceTree = "<group>"; };
+		6D2BD7A126CFF0A100FC03A9 /* WebRTCVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebRTCVideoView.m; sourceTree = "<group>"; };
+		6D2BD7A226CFF0A100FC03A9 /* WebRTCVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoView.h; sourceTree = "<group>"; };
 		6D401BCA1AAC7BAB0041ABC6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		6D401C1F1AAC925C0041ABC6 /* apns.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = apns.caf; sourceTree = "<group>"; };
 		6D4D55E01BA4033800247208 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		6DAA8C7B26CFA51400B9CB21 /* RoomViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoomViewController.h; sourceTree = "<group>"; };
+		6DAA8C7C26CFA51400B9CB21 /* RoomViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RoomViewController.m; sourceTree = "<group>"; };
 		6DC861B91DFC2F2A00A8AF24 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
 		6DF3996419EB9AAE009B03C4 /* conference.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = conference.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF3996719EB9AAE009B03C4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -220,8 +229,14 @@
 		6DF399CD19EBA313009B03C4 /* controller */ = {
 			isa = PBXGroup;
 			children = (
+				6D2BD7A226CFF0A100FC03A9 /* WebRTCVideoView.h */,
+				6D2BD7A126CFF0A100FC03A9 /* WebRTCVideoView.m */,
 				6DFA633C1E12433C00F954F6 /* GroupVOIPViewController.h */,
 				6DFA633B1E12433C00F954F6 /* GroupVOIOPViewController.m */,
+				6DAA8C7B26CFA51400B9CB21 /* RoomViewController.h */,
+				6DAA8C7C26CFA51400B9CB21 /* RoomViewController.m */,
+				6D2BD79E26CFE99B00FC03A9 /* RoomModule.h */,
+				6D2BD79F26CFE99B00FC03A9 /* RoomModule.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -373,7 +388,8 @@
 		};
 		6D0C9B991DF7389200582D38 /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
+			alwaysOutOfDate = 1;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -381,7 +397,7 @@
 			name = "Bundle React Native code and images";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
@@ -429,8 +445,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D06CF1A1E0F68BF0048AC85 /* ViewController.m in Sources */,
+				6DAA8C7D26CFA51400B9CB21 /* RoomViewController.m in Sources */,
 				6DFA633D1E12433C00F954F6 /* GroupVOIOPViewController.m in Sources */,
 				6DF3997819EB9AAE009B03C4 /* AppDelegate.m in Sources */,
+				6D2BD7A026CFE99B00FC03A9 /* RoomModule.m in Sources */,
+				6D2BD7A326CFF0A100FC03A9 /* WebRTCVideoView.m in Sources */,
 				6DF3997419EB9AAE009B03C4 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -602,7 +621,10 @@
 				);
 				INFOPLIST_FILE = "conference/conference-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -668,7 +690,10 @@
 				);
 				INFOPLIST_FILE = "conference/conference-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

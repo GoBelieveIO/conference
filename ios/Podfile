@@ -26,7 +26,7 @@ target 'conference' do
 
   pod 'MBProgressHUD'
   pod 'Toast'
-
+  pod 'Masonry', '~>1.1.0'
  
   #pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   #pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'

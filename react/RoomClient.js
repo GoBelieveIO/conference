@@ -249,7 +249,7 @@ export default class RoomClient extends EventEmitter
 		this._webcam =
 		{
 			device     : null,
-			resolution : 'hd'
+			resolution : 'qvga'
 		};
 
 		this._state = "new";// new/connecting/connected/disconnected/closed,

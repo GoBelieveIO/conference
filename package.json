@@ -8,7 +8,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "scripts": {
-    "lint": "jshint . && eslint .",
+    "lint": "eslint .",
     "validate": "npm ls",
     "start": "react-native start"
   },
@@ -22,10 +22,10 @@
     "prop-types": "^15.7.2",
     "protoo-client": "^4.0.5",
     "random-string": "^0.2.0",
-    "react": "17.0.1",
-    "react-native": "0.64.0",
+    "react": "17.0.2",
+    "react-native": "0.65.1",
     "react-native-permissions": "^3.0.5",
-    "react-native-webrtc": "1.89.3",
+    "react-native-webrtc": "1.92.0",
     "sdp-translator": "^0.1.15",
     "uuid": "~2.0.1"
   },
@@ -33,6 +33,7 @@
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-native": "^3.11.0"
+    "eslint-plugin-react-native": "^3.11.0",
+    "react-native-codegen": "^0.0.7"
   }
 }

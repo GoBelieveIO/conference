@@ -20,6 +20,6 @@ module.exports = {
         "react-native"
     ],
     "rules": {
-        "no-unused-vars":"off"
+        "no-unused-vars":0
     }
 };
