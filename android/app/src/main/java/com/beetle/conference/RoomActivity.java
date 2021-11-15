@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -72,13 +73,6 @@ import java.util.List;
 import java.util.Map;
 
 
-class Participant {
-    public String id;
-    public String displayName;
-    public Map<String, Consumer> consumers;
-    public SurfaceViewRenderer render;
-}
-
 class ReactNativeHostImpl extends ReactNativeHost {
 
     public ReactNativeHostImpl(Application app) {
@@ -97,8 +91,16 @@ class ReactNativeHostImpl extends ReactNativeHost {
         return packages;
     }
 }
+
 public class RoomActivity extends Activity implements RoomModuleObserver {
     private static final String TAG = "face";
+
+    static class Participant {
+        public String id;
+        public String displayName;
+        public Map<String, Consumer> consumers;
+        public SurfaceViewRenderer render;
+    }
 
     private EglBase rootEglBase;
     private long currentUID;
@@ -158,19 +160,23 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
 
         createLocalParticipant();
 
+        try {
+            AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+            am.setSpeakerphoneOn(true);
+            am.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         host = new ReactNativeHostImpl(getApplication());
         mReactInstanceManager = host.getReactInstanceManager();
         mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
             @Override
             public void onReactContextInitialized(ReactContext context) {
                 Log.i(TAG, "react context initialized");
-                WritableMap params = Arguments.createMap();
-                params.putString("roomId", channelID);
-                params.putString("peerId", "" + currentUID);
-                params.putString("displayName", "" + currentUID);
-                sendEvent("join_room", params);
                 RoomModule roomModule = mReactInstanceManager.getCurrentReactContext().getNativeModule(RoomModule.class);
                 roomModule.setObserver(RoomActivity.this);
+                roomModule.joinRoom(channelID, "" + currentUID, token,"" + currentUID, cameraOn, microphoneOn, RoomModule.GROUP_MODE);
             }
         });
 
@@ -183,15 +189,15 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
 
         for (Map.Entry<String, Producer> entry : producers.entrySet()) {
             Producer producer = entry.getValue();
-            if (producer.kind.equals("video") && !TextUtils.isEmpty(producer.streamURL)) {
-                stopRenderStream(producer.streamURL, localRenderer);
+            if (producer.kind.equals("video") && !TextUtils.isEmpty(producer.trackId)) {
+                stopRenderStream(producer.trackId, localRenderer);
             }
         }
         for (int i = 0; i < peers.size(); i++) {
             for (Map.Entry<String, Consumer> entry : peers.get(i).consumers.entrySet()) {
                 Consumer consumer = entry.getValue();
-                if (consumer.kind.equals("video") && !TextUtils.isEmpty(consumer.streamURL)) {
-                    stopRenderStream(consumer.streamURL, peers.get(i).render);
+                if (consumer.kind.equals("video") && !TextUtils.isEmpty(consumer.trackId)) {
+                    stopRenderStream(consumer.trackId, peers.get(i).render);
                 }
             }
         }
@@ -203,35 +209,27 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
 
         RoomModule roomModule = mReactInstanceManager.getCurrentReactContext().getNativeModule(RoomModule.class);
         roomModule.setObserver(null);
-        WritableMap params = Arguments.createMap();
-        params.putString("roomId", channelID);
-        sendEvent("leave_room", params);
-    }
-
-    void sendEvent(String eventName, @Nullable WritableMap params) {
-        mReactInstanceManager.getCurrentReactContext()
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+        roomModule.leaveRoom(channelID);
     }
 
     @Override
     public void onRoomState(String state) {
         Log.i(TAG, "on room state:" + state);
         if (state.equals("closed")) {
-            for (Map.Entry<String, Producer> entry : producers.entrySet()) {
-                Producer producer = entry.getValue();
-                if (producer.kind.equals("video") && !TextUtils.isEmpty(producer.streamURL)) {
-                    stopRenderStream(producer.streamURL, localRenderer);
-                }
-            }
-            for (int i = 0; i < peers.size(); i++) {
-                for (Map.Entry<String, Consumer> entry : peers.get(i).consumers.entrySet()) {
-                    Consumer consumer = entry.getValue();
-                    if (consumer.kind.equals("video") && !TextUtils.isEmpty(consumer.streamURL)) {
-                        stopRenderStream(consumer.streamURL, peers.get(i).render);
-                    }
-                }
-            }
+//            for (Map.Entry<String, Producer> entry : producers.entrySet()) {
+//                Producer producer = entry.getValue();
+//                if (producer.kind.equals("video") && !TextUtils.isEmpty(producer.streamURL)) {
+//                    stopRenderStream(producer.streamURL, localRenderer);
+//                }
+//            }
+//            for (int i = 0; i < peers.size(); i++) {
+//                for (Map.Entry<String, Consumer> entry : peers.get(i).consumers.entrySet()) {
+//                    Consumer consumer = entry.getValue();
+//                    if (consumer.kind.equals("video") && !TextUtils.isEmpty(consumer.streamURL)) {
+//                        stopRenderStream(consumer.streamURL, peers.get(i).render);
+//                    }
+//                }
+//            }
 
             for (int i = 0; i < peers.size(); i++) {
                 RelativeLayout ll = (RelativeLayout) findViewById(R.id.relativeLayout);
@@ -244,7 +242,7 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
     }
 
     @Override
-    public void onNewPeer(String peerId, String displayName) {
+    public void onNewPeer(String peerId, String displayName, boolean present, boolean cameraExists) {
         Log.i(TAG, "on new peer:" + peerId);
         Participant p = new Participant();
         p.id = peerId;
@@ -259,6 +257,8 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
             }
         });
     }
+
+
 
     @Override
     public void onPeerClosed(String peerId) {
@@ -294,29 +294,54 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
     }
 
     @Override
-    public void onAddProducer(Producer producer) {
+    public void onNewPeerMessage(String peerId, String id, ReadableMap map) {
+
+    }
+
+    @Override
+    public void onNewMember(String peerId) {
+
+    }
+    @Override
+    public void onMemberLeft(String peerId) {
+
+    }
+
+    @Override
+    public void onNewProducer(Producer producer) {
         Log.i(TAG, "on add producer:" + producer.id);
         this.producers.put(producer.id, producer);
         if (producer.kind.equals("video")) {
-            startRenderStream(producer.streamURL, localRenderer);
+            startRenderStream(producer.trackId, localRenderer);
             localRenderer.setMirror(producer.type.equals("front"));
         }
     }
 
     @Override
-    public void onRemoveProducer(String producerId) {
-        Log.i(TAG, "on remove producer:" + producerId);
+    public void onProducerWillClose(String producerId) {
+        Log.i(TAG, "on  producer will close:" + producerId);
         if (producers.containsKey(producerId)) {
             Producer producer = producers.get(producerId);
-            producers.remove(producerId);
             if (producer.kind.equals("video")) {
-                stopRenderStream(producer.streamURL, localRenderer);
+                stopRenderStream(producer.trackId, localRenderer);
+
             }
         }
     }
 
     @Override
-    public void onAddConsumer(Consumer consumer, String peerId) {
+    public void onProducerClosed(String producerId) {
+        Log.i(TAG, "on producer closed:" + producerId);
+
+    }
+
+
+    String getPeerId() {
+        return "" + currentUID;
+    }
+
+    @Override
+    public void onNewConsumer(Consumer consumer, String peerId) {
         int index = -1;
         for (int i = 0; i < peers.size(); i++) {
             if (peers.get(i).id.equals(peerId)) {
@@ -331,7 +356,7 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
         Participant peer = peers.get(index);
         peer.consumers.put(consumer.id, consumer);
         if (consumer.kind.equals("video")) {
-            startRenderStream(consumer.streamURL, peer.render);
+            startRenderStream(consumer.trackId, peer.render);
         }
     }
 
@@ -352,12 +377,13 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
 
         if (peer.consumers.containsKey(consumerId)) {
             Log.i(TAG, "remove consumer:" + consumerId);
-            Consumer consumer = peer.consumers.get(consumerId);
-            if (consumer.kind.equals("video")) {
-                stopRenderStream(consumer.streamURL, peer.render);
-            }
             peer.consumers.remove(consumerId);
         }
+    }
+
+    @Override
+    public void onConsumerWillClose(String consumerId, String peerId) {
+
     }
 
     @Override
@@ -370,12 +396,13 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
     }
 
 
-    void stopRenderStream(String streamURL, SurfaceViewRenderer render) {
-        VideoTrack videoTrack = getVideoTrack(streamURL);
+    void stopRenderStream(String trackId, SurfaceViewRenderer render) {
+        VideoTrack videoTrack = getVideoTrack(trackId);
         if (videoTrack != null) {
             videoTrack.removeSink(render);
         }
     }
+
 
     void startRenderStream(String streamURL, SurfaceViewRenderer render) {
         VideoTrack videoTrack = getVideoTrack(streamURL);
@@ -384,26 +411,27 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
         }
     }
 
-    VideoTrack getVideoTrack(String streamURL) {
+    VideoTrack getVideoTrack(String trackId) {
         WebRTCModule module = mReactInstanceManager.getCurrentReactContext().getNativeModule(WebRTCModule.class);
 
         try {
-            Method method = WebRTCModule.class.getDeclaredMethod("getStreamForReactTag", new Class[]{String.class});
+            Method method = WebRTCModule.class.getDeclaredMethod("getTrack", new Class[]{String.class});
             method.setAccessible(true);
 
-            MediaStream stream = (MediaStream) method.invoke(module, streamURL);
+            MediaStreamTrack track = (MediaStreamTrack) method.invoke(module, trackId);
 
-            List<VideoTrack> videoTracks = stream.videoTracks;
-
-            if (!videoTracks.isEmpty()) {
-                VideoTrack videoTrack = videoTracks.get(0);
-                return videoTrack;
+            if (track.kind().equals("video")) {
+                return (VideoTrack)track;
+            } else {
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
+
 
     void createLocalParticipant() {
 
@@ -479,8 +507,8 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
             producer.type = "front";
         }
         localRenderer.setMirror(producer.type.equals("front"));
-        WritableMap params = Arguments.createMap();
-        sendEvent("switch_camera", params);
+        RoomModule roomModule = mReactInstanceManager.getCurrentReactContext().getNativeModule(RoomModule.class);
+        roomModule.switchCamera();
     }
     public void onHangup(View view) {
         Log.i(TAG, "hangup");
@@ -489,9 +517,9 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
 
     public void toggleCamera(View v) {
         cameraOn = !cameraOn;
-        WritableMap params = Arguments.createMap();
-        params.putBoolean("videoMuted", !cameraOn);
-        sendEvent("toggle_video", params);
+
+        RoomModule roomModule = mReactInstanceManager.getCurrentReactContext().getNativeModule(RoomModule.class);
+        roomModule.toggleCamera(cameraOn);
 
         ImageButton cameraButton = (ImageButton)findViewById(R.id.camera);
         if (cameraOn) {
@@ -503,9 +531,8 @@ public class RoomActivity extends Activity implements RoomModuleObserver {
 
     public void toggleMic(View view) {
         microphoneOn = !microphoneOn;
-        WritableMap params = Arguments.createMap();
-        params.putBoolean("audioMuted", !microphoneOn);
-        sendEvent("toggle_audio", params);
+        RoomModule roomModule = mReactInstanceManager.getCurrentReactContext().getNativeModule(RoomModule.class);
+        roomModule.toggleMic(microphoneOn);
 
         ImageButton muteButton = (ImageButton)findViewById(R.id.mute);
         if (microphoneOn) {

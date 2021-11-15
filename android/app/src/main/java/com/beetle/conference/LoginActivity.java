@@ -28,9 +28,8 @@ import androidx.fragment.app.FragmentActivity;
  */
 public class LoginActivity extends FragmentActivity {
     private final String TAG = "demo";
-    private final int REQUEST_CONFERENCE = 1;
-
     private static boolean RN_UI = false;
+    private static boolean TEST_INTERPHONE = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +79,13 @@ public class LoginActivity extends FragmentActivity {
 
                 Log.i(TAG, "uid:" + uid + " channel id:" + conferenceID + " token:" + result);
 
-                Intent intent = new Intent(LoginActivity.this, RN_UI ? GroupVOIPActivity.class : RoomActivity.class);
+                Class cls = TEST_INTERPHONE ? InterphoneActivity.class : (RN_UI ? GroupVOIPActivity.class : RoomActivity.class);
+                Intent intent = new Intent(LoginActivity.this, cls);
                 intent.putExtra("current_uid", uid);
                 intent.putExtra("channel_id", "" + conferenceID);
                 intent.putExtra("token", result);
                 
-                startActivityForResult(intent, REQUEST_CONFERENCE);
+                startActivity(intent);
             }
         }.execute();
     }
@@ -140,8 +140,5 @@ public class LoginActivity extends FragmentActivity {
         return "";
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
 }
