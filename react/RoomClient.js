@@ -766,10 +766,13 @@ export default class RoomClient extends EventEmitter {
             logger.debug('pause mic');
             this._micProducer.pause()
         }
-        const consumer = this._consumers.get(this._audioMixerConsumerId);
-        if (consumer) {
-            consumer.resume();
-        }
+
+        setTimeout(() => {
+            const consumer = this._consumers.get(this._audioMixerConsumerId);
+            if (consumer) {
+                consumer.resume();
+            }
+        }, 100);
     }
 
     async enableWebcam() {
