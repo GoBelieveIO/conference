@@ -10,11 +10,12 @@
     <TextView
         android:text="PTT"
         android:id="@+id/ptt"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="240dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
+        android:textSize="48dp"
         android:background="@color/cardview_shadow_start_color"
         android:clickable="true" />
 
