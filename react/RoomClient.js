@@ -612,8 +612,10 @@ export default class RoomClient extends EventEmitter {
     async enableMic() {
         logger.debug('enableMic()');
 
-        if (this._micProducer)
+        if (this._micProducer) {
+            logger.info('mic producer exists');
             return;
+        }
 
         if (!this._mediasoupDevice.canProduce('audio')) {
             logger.error('enableMic() | cannot produce audio');
@@ -627,6 +629,8 @@ export default class RoomClient extends EventEmitter {
             track = this._stream.getAudioTracks()[0];
             stopTracks = false;
         } else {
+            logger.debug('enableMic() ggggggg');
+
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: true
             });
@@ -637,6 +641,7 @@ export default class RoomClient extends EventEmitter {
                 //react native
                 stream.release(false);
             }
+            logger.debug('enableMic() got track:', track.id);
         }
         try {
             logger.debug('enableMic() | calling getUserMedia()');
@@ -757,6 +762,7 @@ export default class RoomClient extends EventEmitter {
         }
         const consumer = this._consumers.get(this._audioMixerConsumerId);
         if (consumer) {
+            logger.debug('pause audio mixer consume');
             consumer.pause();
         }
     }
@@ -767,12 +773,19 @@ export default class RoomClient extends EventEmitter {
             this._micProducer.pause()
         }
 
-        setTimeout(() => {
-            const consumer = this._consumers.get(this._audioMixerConsumerId);
-            if (consumer) {
-                consumer.resume();
-            }
-        }, 100);
+        const consumer = this._consumers.get(this._audioMixerConsumerId);
+        if (consumer) {
+            logger.debug('resume audio mixer consume');
+            consumer.resume();
+        }
+    }
+
+    resumeAudioMixer() {
+        const consumer = this._consumers.get(this._audioMixerConsumerId);
+        if (consumer) {
+            logger.debug('resume audio mixer consume');
+            consumer.resume();
+        }
     }
 
     async enableWebcam() {
@@ -1710,9 +1723,9 @@ export default class RoomClient extends EventEmitter {
             }
 
             if (mixerProducerId) {
-				console.log("mixer producer id:", mixerProducerId);
                 const consumer = await this._consumeProducer({ producerId : mixerProducerId, peerId : this._me.id });
                 this._audioMixerConsumerId = consumer.id;
+                console.log("mixer producer id:", mixerProducerId, " consumer id:", consumer.id);
 			}
         } catch (error) {
             logger.error('_joinRoom() failed:%o', error);

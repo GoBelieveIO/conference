@@ -324,6 +324,11 @@ public class RoomModule extends ReactContextBaseJavaModule {
         sendEvent("release_microphone", params);
     }
 
+    public void resumeAudioMixer() {
+        WritableMap params = Arguments.createMap();
+        sendEvent("resume_audiomixer", params);
+    }
+
     public void sendPeerMessage(WritableMap params) {
         if (!params.hasKey("receiver") || !params.hasKey(("id"))) {
             throw new RuntimeException("no receiver||id");

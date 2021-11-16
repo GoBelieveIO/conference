@@ -85,6 +85,10 @@ export default class RoomModule {
             this._roomClient.releaseMicrophone();
         });
 
+        Emitter.addListener("resume_audiomixer", ({}) => {
+            this._roomClient.resumeAudioMixer();
+        });
+
         Emitter.addListener("toggle_camera", ({videoMuted}) => {
            this.toggleCamera(videoMuted);
         });

@@ -1,42 +1,24 @@
 package com.beetle.conference;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.oney.WebRTCModule.EglUtils;
-import com.oney.WebRTCModule.WebRTCModule;
-
-import org.webrtc.EglBase;
-import org.webrtc.MediaStream;
-import org.webrtc.SurfaceViewRenderer;
-import org.webrtc.VideoTrack;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +27,8 @@ import java.util.Map;
 
 public class InterphoneActivity extends Activity implements RoomModuleObserver {
     private static final String TAG = "face";
+
+    private static final int AV_PERMISSIONS_REQUEST = 1;
 
     static class Participant {
         public String id;
@@ -65,6 +49,8 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
 
     View pttView;
     RoomModule roomModule;
+    Handler handler;
+    Toast toast;
 
     Map<String, Producer> producers = new HashMap<>();
     Map<String, Consumer> consumers = new HashMap<>();
@@ -117,6 +103,8 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
             e.printStackTrace();
         }
 
+        handler = new Handler();
+
         host = new ReactNativeHostImpl(getApplication());
         mReactInstanceManager = host.getReactInstanceManager();
         mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
@@ -130,7 +118,7 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
             }
         });
 
-        mReactInstanceManager.createReactContextInBackground();
+
 
         pttView = findViewById(R.id.ptt);
         pttView.setOnTouchListener(new View.OnTouchListener() {
@@ -141,21 +129,36 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
                         if (roomModule != null) {
                             roomModule.acquireMic();
                         }
-                        Toast.makeText(InterphoneActivity.this, "开始讲话", Toast.LENGTH_SHORT).show();
+                        showToast("开始讲话");
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         return true;
                     case MotionEvent.ACTION_UP:
                         if (roomModule != null) {
-                            roomModule.releaseMic();
+
+                            pttView.setEnabled(false);
+                            roomModule.muteMic(false);
+
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    roomModule.resumeAudioMixer();
+                                    pttView.setEnabled(true);
+                                }
+                            }, 200);
+
+                            //react native timer can't work in background
+                            //roomModule.releaseMic();
                         }
-                        Toast.makeText(InterphoneActivity.this, "停止讲话", Toast.LENGTH_SHORT).show();
+                        showToast("停止讲话");
                         return true;
                     default:
                         return false;
                 }
             }
         });
+
+        requestAVPermission();
     }
 
     @Override
@@ -165,6 +168,27 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
         RoomModule roomModule = mReactInstanceManager.getCurrentReactContext().getNativeModule(RoomModule.class);
         roomModule.setObserver(null);
         roomModule.leaveRoom(channelID);
+
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostDestroy(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostPause(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostResume(this, null);
+        }
     }
 
     @Override
@@ -173,11 +197,91 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
         //super.onBackPressed();
     }
 
-    void sendEvent(String eventName, @Nullable WritableMap params) {
-        mReactInstanceManager.getCurrentReactContext()
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+
+    void showToast(String text) {
+        if (toast != null) {
+            toast.cancel();
+        }
+
+        toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+        toast.show();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == AV_PERMISSIONS_REQUEST && permissions != null && grantResults != null) {
+            boolean granted = true;
+            String device = "";
+            for (int i = 0; i < permissions.length && i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    device = permissions[i];
+                }
+                Log.i(TAG, "granted permission:" + permissions[i] + " " + grantResults[i]);
+            }
+
+            final boolean fgranted = granted;
+            final String gdevice = device;
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (fgranted) {
+                        onPermissionGranted();
+                    } else {
+                        onPermissionDenied(gdevice);
+                    }
+                }
+            });
+        }
+    }
+
+    protected void requestAVPermission() {
+
+        int cameraPermission = (checkSelfPermission(Manifest.permission.CAMERA));
+        int recordPermission = (checkSelfPermission(Manifest.permission.RECORD_AUDIO));
+
+        ArrayList<String> permissions = new ArrayList<String>();
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.CAMERA);
+        }
+        if (recordPermission != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.RECORD_AUDIO);
+        }
+
+        if (permissions.size() > 0) {
+            String[] array = new String[permissions.size()];
+            permissions.toArray(array);
+            this.requestPermissions(array, AV_PERMISSIONS_REQUEST);
+        } else {
+            this.onPermissionGranted();
+        }
+
+
+    }
+
+    protected void onPermissionGranted() {
+        mReactInstanceManager.createReactContextInBackground();
+    }
+
+
+    protected void onPermissionDenied(String device) {
+        if (TextUtils.isEmpty(device)) {
+            device = "设备";
+        }
+        String msg = String.format("需要%s的访问权限", device);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.show();
+    }
+
+
+
 
     @Override
     public void onRoomState(String state) {
@@ -195,6 +299,10 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
         p.id = peerId;
         p.displayName = displayName;
         this.peers.add(p);
+
+        String s = String.format("人数:%d", peers.size() + 1);
+        TextView countTextView = findViewById(R.id.count);
+        countTextView.setText(s);
     }
 
     @Override
@@ -209,6 +317,10 @@ public class InterphoneActivity extends Activity implements RoomModuleObserver {
         }
         Participant peer = peers.get(index);
         peers.remove(index);
+
+        String s = String.format("人数:%d", peers.size() + 1);
+        TextView countTextView = findViewById(R.id.count);
+        countTextView.setText(s);
     }
 
     @Override
