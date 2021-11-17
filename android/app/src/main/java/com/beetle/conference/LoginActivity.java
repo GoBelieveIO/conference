@@ -29,7 +29,7 @@ import androidx.fragment.app.FragmentActivity;
 public class LoginActivity extends FragmentActivity {
     private final String TAG = "demo";
     private static boolean RN_UI = false;
-    private static boolean TEST_INTERPHONE = true;
+    private static boolean TEST_INTERPHONE = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
